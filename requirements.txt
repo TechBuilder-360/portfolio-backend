@@ -9,7 +9,7 @@ coreschema==0.0.4
 dj-database-url==0.5.0
 Django==2.2.8
 django-admin==2.0.1
-django-anymail==0.11.1
+django-anymail==1.2.1
 django-debug-toolbar==1.11
 django-excel-base==1.0.4
 django-excel-response2==3.0.2
