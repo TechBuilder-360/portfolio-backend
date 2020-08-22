@@ -1,3 +1,7 @@
-from django.shortcuts import render
+from django.template.response import TemplateResponse
 
-# Create your views here.
+
+def index(request):
+    if request.user.is_authenticated:
+        print(request.user)
+    return TemplateResponse(request, 'accounts/google_auth.html')
