@@ -3,7 +3,6 @@ chardet==3.0.4
 cloudinary==1.20.0
 Django>=3.1.1
 django-admin==2.0.1
-django-anymail==0.11.1
 django-filter==2.3.0
 django-six==1.0.4
 djangorestframework==3.11.0
