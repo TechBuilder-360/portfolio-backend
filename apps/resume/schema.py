@@ -1,12 +1,8 @@
 import graphene
 from graphene_django import DjangoObjectType
 from graphene_django.forms.mutation import DjangoModelFormMutation
-
 from .models import SocialLink, Education, Experience, Project, Skill
 from .forms import SocialLinkForm, EducationForm, ExperienceForm, ProjectForm, SkillForm
-from accounts.models import User
-
-from accounts.schema import UserType
 
 
 class SocialLinkType(DjangoObjectType):
@@ -62,24 +58,47 @@ class Query(graphene.ObjectType):
         return Skill.objects.filter(user=user_id)
 
 
-# class SocialLinkMutation(DjangoModelFormMutation):
-#     social = graphene.Field()
-#
-#     class Meta:
-#         form_class = SocialLinkForm
-#
-#
-# class SocialLinkMutation(DjangoModelFormMutation):
-#     social = graphene.Field()
-#
-#     class Meta:
-#         form_class = SocialLinkForm
+class SocialLinkMutation(DjangoModelFormMutation):
+    social = graphene.Field(SocialLinkType)
+
+    class Meta:
+        form_class = SocialLinkForm
 
 
+class EducationMutation(DjangoModelFormMutation):
+    education = graphene.Field(EducationType)
+
+    class Meta:
+        form_class = EducationForm
 
 
-# class Mutation(graphene.ObjectType):
-#     pass
+class ExperienceMutation(DjangoModelFormMutation):
+    experience = graphene.Field(ExperienceType)
+
+    class Meta:
+        form_class = ExperienceForm
 
 
-schema = graphene.Schema(query=Query)  # mutation=Mutation)
+class ProjectMutation(DjangoModelFormMutation):
+    project = graphene.Field(ProjectType)
+
+    class Meta:
+        form_class = ProjectForm
+
+
+class SkillMutation(DjangoModelFormMutation):
+    skill = graphene.Field(SkillType)
+
+    class Meta:
+        form_class = SkillForm
+
+
+class Mutation(graphene.ObjectType):
+    social = SocialLinkMutation.Field()
+    education = EducationMutation.Field()
+    experience = ExperienceMutation.Field()
+    project = ProjectMutation.Field()
+    skill = SkillMutation.Field()
+
+
+schema = graphene.Schema(query=Query, mutation=Mutation)
