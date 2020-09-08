@@ -36,6 +36,11 @@ INSTALLED_APPS = [
     'graphene_django'
 ]
 
+TEMPLATE_LOADERS = [
+    'django.template.loaders.app_directories.Loader',
+    'django.template.loaders.filesystem.Loader',
+]
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     # 'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -56,7 +61,11 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.contrib.auth.context_processors.auth',
                 'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -82,9 +91,6 @@ DATABASES = {
         'PORT': os.getenv('PORTFOLIO_DATABASE_PORT')
     },
 }
-
-# DATABASES = {}
-# DATABASES['default'] = dj_database_url.config(conn_max_age=600, engine='PostgreSQL')
 
 # LOGIN_URL = '/auth/login/google-oauth2/'
 
