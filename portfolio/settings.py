@@ -15,7 +15,7 @@ SECRET_KEY = os.getenv('PORTFOLIO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('PORTFOLIO_DEBUG')
 
-ALLOWED_HOSTS = os.getenv('PORTFOLIO_ALLOWED_HOSTS')
+ALLOWED_HOSTS = os.getenv('PORTFOLIO_ALLOWED_HOSTS').split(',')
 
 # Application definition
 AUTH_USER_MODEL = "accounts.User"
