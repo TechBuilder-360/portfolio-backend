@@ -71,19 +71,19 @@ WSGI_APPLICATION = 'portfolio.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': os.getenv('PORTFOLIO_DATABASE_ENGINE'),
-#         'NAME': os.getenv('PORTFOLIO_DATABASE_NAME'),
-#         'USER': os.getenv('PORTFOLIO_DATABASE_USER'),
-#         'PASSWORD': os.getenv('PORTFOLIO_DATABASE_PASSWORD'),
-#         'HOST': os.getenv('PORTFOLIO_DATABASE_HOST'),
-#         'PORT': os.getenv('PORTFOLIO_DATABASE_PORT')
-#     },
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': os.getenv('PORTFOLIO_DATABASE_ENGINE'),
+        'NAME': os.getenv('PORTFOLIO_DATABASE_NAME'),
+        'USER': os.getenv('PORTFOLIO_DATABASE_USER'),
+        'PASSWORD': os.getenv('PORTFOLIO_DATABASE_PASSWORD'),
+        'HOST': os.getenv('PORTFOLIO_DATABASE_HOST'),
+        'PORT': os.getenv('PORTFOLIO_DATABASE_PORT')
+    },
+}
 
-DATABASES = {}
-DATABASES['default'] = dj_database_url.config(conn_max_age=600)
+# DATABASES = {}
+# DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 
 # LOGIN_URL = '/auth/login/google-oauth2/'
 

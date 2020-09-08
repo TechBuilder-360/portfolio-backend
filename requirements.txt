@@ -19,3 +19,4 @@ PyPDF2==1.26.0
 xhtml2pdf==0.2.4
 social-auth-app-django
 graphene_django
+dj-database-url
