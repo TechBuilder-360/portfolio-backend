@@ -1,7 +1,14 @@
 import os
 import cloudinary
+import dj_database_url
+import dotenv
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+dotenv_file = os.path.join(BASE_DIR, ".keys")
+if os.path.isfile(dotenv_file):
+    dotenv.load_dotenv(dotenv_file)
+
 
 SECRET_KEY = os.getenv('PORTFOLIO_SECRET_KEY')
 
@@ -30,6 +37,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # 'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -63,16 +71,19 @@ WSGI_APPLICATION = 'portfolio.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': os.getenv('PORTFOLIO_DATABASE_ENGINE'),
-        'NAME': os.getenv('PORTFOLIO_DATABASE_NAME'),
-        'USER': os.getenv('PORTFOLIO_DATABASE_USER'),
-        'PASSWORD': os.getenv('PORTFOLIO_DATABASE_PASSWORD'),
-        'HOST': os.getenv('PORTFOLIO_DATABASE_HOST'),
-        'PORT': os.getenv('PORTFOLIO_DATABASE_PORT')
-    },
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': os.getenv('PORTFOLIO_DATABASE_ENGINE'),
+#         'NAME': os.getenv('PORTFOLIO_DATABASE_NAME'),
+#         'USER': os.getenv('PORTFOLIO_DATABASE_USER'),
+#         'PASSWORD': os.getenv('PORTFOLIO_DATABASE_PASSWORD'),
+#         'HOST': os.getenv('PORTFOLIO_DATABASE_HOST'),
+#         'PORT': os.getenv('PORTFOLIO_DATABASE_PORT')
+#     },
+# }
+
+DATABASES = {}
+DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 
 # LOGIN_URL = '/auth/login/google-oauth2/'
 
@@ -113,6 +124,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
+
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 STATIC_URL = os.getenv('PORTFOLIO_STATIC_URL')
 
