@@ -29,6 +29,16 @@ class RegistrationForm(ModelForm):
         return user
 
 
+# class LoginForm(ModelForm):
+#     class Meta:
+#         model = User
+#         fields = ('email', 'password')
+#
+#     def clean(self):
+#         email = self.cleaned_data['email']
+#
+
+
 class PersonalInformationForm(ModelForm):
 
     user_id = forms.IntegerField(required=True)

@@ -26,11 +26,11 @@ class Education(models.Model):
     education_type = models.CharField(max_length=20, choices=EDUCATION_CHOICE, null=False, blank=False)
     institution = models.CharField(max_length=100, null=False, blank=False)
     start_year = models.DateField()
-    end_year = models.DateField(null=True)
+    end_year = models.DateField(null=True, blank=True)
     in_progress = models.BooleanField(
         default=True)  # TODO: a checker should be set to change in_progress to false if end date is a future date
-    degree = models.CharField(max_length=50)
-    course = models.CharField(max_length=50, verbose_name=_('Discipline'))
+    degree = models.CharField(max_length=50, null=False, blank=False)
+    course = models.CharField(max_length=50, verbose_name=_('Discipline'), null=False, blank=False)
 
     def __str__(self):
         return str(self.user) + " " + self.education_type
