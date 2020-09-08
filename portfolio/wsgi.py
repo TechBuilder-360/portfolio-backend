@@ -11,9 +11,12 @@ import os, sys
 
 from django.core.wsgi import get_wsgi_application
 
-filedir = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.join(filedir, 'apps'))
-sys.path.append(os.path.join(filedir, 'portfolio'))
+PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
+PROJECT_BASE = os.path.abspath(os.path.join(PROJECT_DIR, '..'))
+APP_DIR = os.path.abspath(os.path.join(PROJECT_BASE, 'apps'))
+sys.path.append(PROJECT_DIR)
+sys.path.append(PROJECT_BASE)
+sys.path.append(APP_DIR)
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'portfolio.settings')
 
