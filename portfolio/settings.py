@@ -4,6 +4,7 @@ import dj_database_url
 import dotenv
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_BASE = os.path.abspath(os.path.join(BASE_DIR, '..'))
 
 dotenv_file = os.path.join(BASE_DIR, ".keys")
 if os.path.isfile(dotenv_file):
@@ -71,19 +72,19 @@ WSGI_APPLICATION = 'portfolio.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': os.getenv('PORTFOLIO_DATABASE_ENGINE'),
-#         'NAME': os.getenv('PORTFOLIO_DATABASE_NAME'),
-#         'USER': os.getenv('PORTFOLIO_DATABASE_USER'),
-#         'PASSWORD': os.getenv('PORTFOLIO_DATABASE_PASSWORD'),
-#         'HOST': os.getenv('PORTFOLIO_DATABASE_HOST'),
-#         'PORT': os.getenv('PORTFOLIO_DATABASE_PORT')
-#     },
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': os.getenv('PORTFOLIO_DATABASE_ENGINE'),
+        'NAME': os.getenv('PORTFOLIO_DATABASE_NAME'),
+        'USER': os.getenv('PORTFOLIO_DATABASE_USER'),
+        'PASSWORD': os.getenv('PORTFOLIO_DATABASE_PASSWORD'),
+        'HOST': os.getenv('PORTFOLIO_DATABASE_HOST'),
+        'PORT': os.getenv('PORTFOLIO_DATABASE_PORT')
+    },
+}
 
-DATABASES = {}
-DATABASES['default'] = dj_database_url.config(conn_max_age=600)
+# DATABASES = {}
+# DATABASES['default'] = dj_database_url.config(conn_max_age=600, engine='PostgreSQL')
 
 # LOGIN_URL = '/auth/login/google-oauth2/'
 
@@ -127,7 +128,18 @@ USE_TZ = True
 
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+STATIC_ROOT = os.path.join(PROJECT_BASE, 'static')
+
 STATIC_URL = os.getenv('PORTFOLIO_STATIC_URL')
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
 
 # add config
 cloudinary.config(
