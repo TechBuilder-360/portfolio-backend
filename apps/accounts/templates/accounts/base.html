@@ -1,11 +1,16 @@
-{% load custom_filter %}
+{% load static custom_filter %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Welcome</title>
+    <link type="text/css" rel="stylesheet" href="{% static 'css/style.css'%}">
 </head>
-<body>
-<h1 style="text-align: center; position: relative; top: 250px">Application is still under construction, {%days_until%} days to initial launch.</h1>
+<body style="text-align: center">
+<h1 style="margin: 250px 0 20px">
+    Application is still under construction, {% days_until %} days to initial launch.
+    <small>Checkout the available graphql <a href="{% url 'graphql' %}">api</a></small>
+</h1>
+<img src="{% static 'images/construction.jpeg' %}" width="300" height="300" alt="Construction image">
 </body>
 </html>
