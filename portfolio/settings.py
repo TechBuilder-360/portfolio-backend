@@ -3,7 +3,7 @@ import cloudinary
 import dotenv
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PROJECT_BASE = os.path.abspath(os.path.join(BASE_DIR, '..'))
+PROJECT_BASE = os.path.abspath(os.path.join(BASE_DIR, 'portfolio'))
 
 dotenv_file = os.path.join(BASE_DIR, ".keys")
 if os.path.isfile(dotenv_file):
@@ -56,7 +56,9 @@ ROOT_URLCONF = 'portfolio.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(PROJECT_BASE, 'templates')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -133,7 +135,7 @@ USE_TZ = True
 
 STATIC_URL = os.getenv('PORTFOLIO_STATIC_URL')
 
-STATIC_ROOT = os.path.join(PROJECT_BASE, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'portfolio', 'static'),
