@@ -1,14 +1,23 @@
 import os
+from datetime import timedelta
+
 import cloudinary
+import dotenv
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_BASE = os.path.abspath(os.path.join(BASE_DIR, 'portfolio'))
+
+dotenv_file = os.path.join(BASE_DIR, ".keys")
+if os.path.isfile(dotenv_file):
+    dotenv.load_dotenv(dotenv_file)
+
 
 SECRET_KEY = os.getenv('PORTFOLIO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('PORTFOLIO_DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('PORTFOLIO_ALLOWED_HOSTS').split(',')
 
 # Application definition
 AUTH_USER_MODEL = "accounts.User"
@@ -16,19 +25,30 @@ AUTH_USER_MODEL = "accounts.User"
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
+    "django.contrib.sites",
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'resume',
     'accounts',
     'rest_framework',
     'cloudinary',
     'social_django',
-    'graphene_django'
+    'graphene_django',
+    "graphql_auth",
+    'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
+]
+
+TEMPLATE_LOADERS = [
+    'django.template.loaders.app_directories.Loader',
+    'django.template.loaders.filesystem.Loader',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -38,16 +58,29 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:3000',
+)
+
+SITE_ID = 1
+
 ROOT_URLCONF = 'portfolio.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(PROJECT_BASE, 'templates')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.contrib.auth.context_processors.auth',
                 'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -116,6 +149,19 @@ USE_TZ = True
 
 STATIC_URL = os.getenv('PORTFOLIO_STATIC_URL')
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'portfolio', 'static'),
+)
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
+
 # add config
 cloudinary.config(
     cloud_name=os.getenv('PORTFOLIO_CLOUD_NAME'),
@@ -139,14 +185,13 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('PORTFOLIO_SOCIAL_AUTH_GOOGLE_OAUTH
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv('PORTFOLIO_SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
 
-SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
+SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = False
 
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
     'social_core.pipeline.social_auth.social_user',
     'social_core.pipeline.user.get_username',
-    'social_core.pipeline.social_auth.associate_by_email',
     'social_core.pipeline.user.create_user',
     'social_core.pipeline.social_auth.associate_user',
     'social_core.pipeline.social_auth.load_extra_data',
@@ -154,11 +199,43 @@ SOCIAL_AUTH_PIPELINE = (
     'accounts.pipeline.get_avatar',
 )
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
+    "graphql_auth.backends.GraphQLAuthBackend",
     'django.contrib.auth.backends.ModelBackend',
 )
 
 GRAPHENE = {
-    "SCHEMA": "portfolio.schema.schema"
+    "SCHEMA": "portfolio.schema.schema",
+    'MIDDLEWARE': [
+        'graphql_jwt.middleware.JSONWebTokenMiddleware'
+    ]
 }
+
+GRAPHQL_JWT = {
+    'JWT_VERIFY_EXPIRATION': True,
+    'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
+
+    "JWT_ALLOW_ANY_CLASSES": [
+        "graphql_auth.mutations.Register",
+        "graphql_auth.mutations.VerifyAccount",
+        "graphql_auth.mutations.ResendActivationEmail",
+        "graphql_auth.mutations.SendPasswordResetEmail",
+        "graphql_auth.mutations.PasswordReset",
+        "graphql_auth.mutations.ObtainJSONWebToken",
+        "graphql_auth.mutations.VerifyToken",
+        "graphql_auth.mutations.RefreshToken",
+        "graphql_auth.mutations.RevokeToken",
+    ],
+}
+
+GRAPHQL_AUTH = {
+    'LOGIN_ALLOWED_FIELDS': ['email'],
+}
+
+EXPIRATION_ACTIVATION_TOKEN = timedelta(days=1)
+EXPIRATION_PASSWORD_RESET_TOKEN = timedelta(minutes=30)
+
+EMAIL_FROM=os.getenv('PORTFOLIO_EMAIL_FROM', '')
