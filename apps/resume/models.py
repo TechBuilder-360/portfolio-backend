@@ -3,9 +3,17 @@ from django.utils.translation import ugettext_lazy as _
 from accounts.models import User
 
 
+SOCIAL_LABEL= (
+    ("Facebook", "Facebook"),
+    ("Twitter", "Twitter"),
+    ("Linkedin", "Linkedin"),
+    ("Website", "Website"),
+    ("Others", "Others"),
+)
+
 class SocialLink(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT)
-    label = models.CharField(max_length=20, verbose_name=_("Social host i.e Facebook, twitter etc."))
+    label = models.CharField(max_length=20, choices=SOCIAL_LABEL, verbose_name=_("Social host i.e Facebook, twitter etc."))
     profile_url = models.URLField()
 
     def __str__(self):
@@ -50,7 +58,7 @@ class Experience(models.Model):  # Employment History
 
 class Project(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    project_name = models.CharField(max_length=50, null=False, blank=False)
+    project_source = models.CharField(max_length=50, null=False, blank=False, help_text="Project source if provided url is link to other projects else name.")
     project_url = models.URLField()  # TODO Add option to fetch content of url i.e pull github project details
 
     def __str__(self):
@@ -59,7 +67,7 @@ class Project(models.Model):
 
 class Skill(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(max_length=30)
+    title = models.CharField(max_length=30, null=False, blank=False)
 
     def __str__(self):
         return self.title
