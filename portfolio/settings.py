@@ -11,11 +11,10 @@ dotenv_file = os.path.join(BASE_DIR, ".keys")
 if os.path.isfile(dotenv_file):
     dotenv.load_dotenv(dotenv_file)
 
-
 SECRET_KEY = os.getenv('PORTFOLIO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('PORTFOLIO_DEBUG')
+DEBUG = bool(os.getenv('PORTFOLIO_DEBUG'))
 
 ALLOWED_HOSTS = os.getenv('PORTFOLIO_ALLOWED_HOSTS').split(',')
 
@@ -36,6 +35,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'cloudinary',
     'social_django',
+    'django_filters',
     'graphene_django',
     "graphql_auth",
     'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
@@ -199,7 +199,24 @@ SOCIAL_AUTH_PIPELINE = (
     'accounts.pipeline.get_avatar',
 )
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = os.getenv('PORTFOLIO_EMAIL_BACKEND')
+EMAIL_FILE_PATH = os.path.normpath(os.path.join(BASE_DIR, 'emails'))
+EMAIL_HOST = os.getenv('PORTFOLIO_EMAIL_HOST', 'smtp.mailgun.com')
+EMAIL_PORT = os.getenv('PORTFOLIO_EMAIL_PORT', 587)
+EMAIL_HOST_USER = os.getenv('PORTFOLIO_EMAIL_USER')
+EMAIL_HOST_PASSWORD = os.getenv('PORTFOLIO_EMAIL_PASSWORD')
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_FROM = os.getenv('PORTFOLIO_EMAIL_FROM', '')
+
+DEFAULT_FROM_EMAIL = os.getenv('PORTFOLIO_EMAIL_FROM_EMAIL')
+# SERVER_EMAIL = 'django@my-domain.com'  # os.getenv('PORTFOLIO_EMAIL_SERVER_EMAIL')
+
+ADMINS = (
+    ('admin', 'adegunwatoluwalope@gmail.com'),
+)
+
+MANAGERS = ADMINS
 
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
@@ -233,9 +250,8 @@ GRAPHQL_JWT = {
 
 GRAPHQL_AUTH = {
     'LOGIN_ALLOWED_FIELDS': ['email'],
+    'REGISTER_MUTATION_FIELDS_OPTIONAL': ["first_name", "last_name"]
 }
 
 EXPIRATION_ACTIVATION_TOKEN = timedelta(days=1)
 EXPIRATION_PASSWORD_RESET_TOKEN = timedelta(minutes=30)
-
-EMAIL_FROM=os.getenv('PORTFOLIO_EMAIL_FROM', '')

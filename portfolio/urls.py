@@ -8,7 +8,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("graphql/", csrf_exempt(GraphQLView.as_view(graphiql=True)), name="graphql"),
     path('', TemplateView.as_view(template_name="index.html")),
-    path('google/', TemplateView.as_view(template_name="accounts/google_auth.html")),
-    path('api/', include('accounts.urls')),
+    # path('google/', TemplateView.as_view(template_name="accounts/google_auth.html")),
+    path('api/doc/', TemplateView.as_view(template_name="doc.html"), name="doc"),
     path('', include('social_django.urls', namespace='social')),
 ]

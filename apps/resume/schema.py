@@ -79,7 +79,7 @@ class SocialLinkMutation(graphene.Mutation):
     def mutate(self, info, **data):
         user = info.context.user
         try:
-            SocialLink.objects.get(user=user, project_url=data['url'])
+            SocialLink.objects.get(user=user, profile_url=data['url'])
             return SocialLinkMutation(ok=False, warning='Social contact already exist')
         except SocialLink.DoesNotExist:
             social, created = SocialLink.objects.update_or_create(

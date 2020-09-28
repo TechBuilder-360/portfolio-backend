@@ -14,8 +14,8 @@ from graphql import GraphQLError
 class UserType(DjangoObjectType):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'middle_name', 'email', 'gender', 'phone', 'bio', 'resume', 'languages',
-                  'nationality', 'state_of_residence', 'date_of_birth', 'profession', 'profile_pix', 'id')
+        fields = ('first_name', 'last_name', 'middle_name', 'username', 'email', 'gender', 'phone', 'bio', 'resume',
+                  'languages', 'nationality', 'state_of_residence', 'date_of_birth', 'profession', 'profile_pix', 'id')
 
 
 class ContactType(DjangoObjectType):

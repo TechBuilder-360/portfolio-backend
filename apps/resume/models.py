@@ -11,10 +11,16 @@ SOCIAL_LABEL= (
     ("Others", "Others"),
 )
 
+
+PROJECT_SOURCE= (
+    ("Github", "Github"),
+    ("OTHER", "Other"),
+)
+
 class SocialLink(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     label = models.CharField(max_length=20, choices=SOCIAL_LABEL, verbose_name=_("Social host i.e Facebook, twitter etc."))
-    profile_url = models.URLField()
+    social_url = models.URLField()
 
     def __str__(self):
         return self.label
@@ -46,20 +52,22 @@ class Education(models.Model):
 
 class Experience(models.Model):  # Employment History
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(max_length=50, null=False, blank=False)
+    organization = models.CharField(max_length=50, null=False, blank=False)
     description = models.CharField(max_length=200, null=False, blank=False)
     start_year = models.DateField()
     end_year = models.DateField(null=True)
     in_progress = models.BooleanField(default=True)  # True if end date is not specified
 
     def __str__(self):
-        return str(self.user) + "(" + self.title[20] + ")"
+        return str(self.user) + "(" + self.organization[20] + ")"
 
 
 class Project(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    project_source = models.CharField(max_length=50, null=False, blank=False, help_text="Project source if provided url is link to other projects else name.")
+    project_source = models.CharField(max_length=50, null=False, blank=False, choices=PROJECT_SOURCE, default='', help_text="Project source if provided url is link to other projects else name.")
     project_url = models.URLField()  # TODO Add option to fetch content of url i.e pull github project details
+    title = models.CharField(max_length=50, null=True, blank=True)
+    description = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
         return str(self.user) + "(" + self.project_name[20] + ")"

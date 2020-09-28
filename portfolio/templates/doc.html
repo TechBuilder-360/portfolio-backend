@@ -1,0 +1,394 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport">
+    <meta charset="UTF-8">
+    <title>xPortfolio :: GraphQL API Documentation</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" type="text/css"/>
+</head>
+<body style="">
+<div class="container">
+    <div class="row">
+        <h2 class="mt-5 mb-3">GraphQL API Documentation</h2>
+        <div class="col-sm-12 col-md-12">
+            There is just a single end point for all api request
+            <code>https://xportfolio.herokuapp.com/graphql</code>
+            <p>The access point accept only POST request</p>
+        </div>
+        <div class="col-sm-12 col-md-12">
+            <h2>Query</h2>
+            <table class="table table-striped table-bordered">
+                <caption>
+                    <mark> ! Means the field is required</mark>
+                    <br>
+                    <mark> All the payload values are not required as response for all request but each request must
+                        contain at least one of the payload
+                    </mark>
+                    <br>
+                    <mark>Fields are case sensitive</mark>
+                </caption>
+                <thead>
+                <th>
+                    Field
+                </th>
+                <th>
+                    Parameters
+                </th>
+                <th>
+                    Payloads
+                </th>
+                <th>
+                    Description
+                </th>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>getSocialLinks</td>
+                    <td>username: String!</td>
+                    <td>id: ID!<br>
+                        label: SocialLinkLabel!<br>
+                        socialUrl: String!
+                    </td>
+                    <td>It is used to return a list of the social link associated with the username supplied in the
+                        parameter.
+                    </td>
+                </tr>
+                <tr>
+                    <td>getEducation</td>
+                    <td>username: String!</td>
+                    <td>id: ID!<br>
+                        educationType: EducationEducationType!<br>
+                        institution: String!<br>
+                        startYear: Date!<br>
+                        endYear: Date<br>
+                        inProgress: Boolean!<br>
+                        degree: String!<br>
+                        course: String!
+                    </td>
+                    <td>It is used to return a list of education details associated with the username supplied in the
+                        parameter.
+                    </td>
+                </tr>
+                <tr>
+                    <td>getExperience</td>
+                    <td>username: String!</td>
+                    <td>id: ID!<br>
+                        organization: String!<br>
+                        description: String!<br>
+                        startYear: Date!<br>
+                        endYear: Date<br>
+                        inProgress: Boolean!
+                    </td>
+                    <td>It is used to return a list of experience associated with the username supplied in the
+                        parameter.
+                    </td>
+                </tr>
+                <tr>
+                    <td>getProjects</td>
+                    <td>username: String!</td>
+                    <td>id: ID!<br>
+                        projectSource: ProjectProjectSource!
+                        <small>Project source if provided url is link to other projects else project name.</small><br>
+
+                        projectUrl: String!<br>
+                        title: String<br>
+                        description: String
+                    </td>
+                    <td>It is used to return a list of projects associated with the username supplied in the
+                        parameter.
+                    </td>
+                </tr>
+                <tr>
+                    <td>getSkills</td>
+                    <td>username: String!</td>
+                    <td>id: ID!<br>
+                        title: String!
+                    </td>
+                    <td>It is used to return a list of skills associated with the username supplied in the
+                        parameter.
+                    </td>
+                </tr>
+                <tr>
+                    <td>getPersonalInfo</td>
+                    <td>username: String!</td>
+                    <td>id: ID!<br>
+                        username: String!<br>
+                        firstName: String!<br>
+                        lastName: String!<br>
+                        middleName: String<br>
+                        email: String!<br>
+                        gender: UserGender<br>
+                        phone: String<br>
+                        bio: String
+                        <small>Professional Summary</small><br>
+                        languages: String<br>
+                        resume: String<br>
+                        nationality: String<br>
+                        stateOfResidence: String<br>
+                        dateOfBirth: Date<br>
+                        profession: String!<br>
+                        profilePix: String
+                    </td>
+                    <td>
+                        It is used to return personal information associated with the username supplied in the
+                        parameter.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <p>From the table above it can be seen that some fields are making use of user define type like UserGender,
+                SocialLinkLabel, EducationEducationType, ProjectProjectSource. This fields require some predefined
+                options of values that they accept</p>
+            <table class="table table-striped table-bordered">
+                <thead>
+                <th>User defined field</th>
+                <th>Accepted values</th>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>UserGender</td>
+                    <td>
+                        Male<br>
+                        Female<br>
+                        Unknown
+                    </td>
+                </tr>
+                <tr>
+                    <td>SocialLinkLabel</td>
+                    <td>Facebook<br>
+                        Twitter<br>
+                        Linkedin<br>
+                        Website<br>
+                        Others
+                    </td>
+                </tr>
+                <tr>
+                    <td>EducationEducationType</td>
+                    <td>Primary<br>
+                        Secondary<br>
+                        Tertiary<br>
+                        Diploma
+                    </td>
+                </tr>
+                <tr>
+                    <td>ProjectProjectSource</td>
+                    <td>Github<br>
+                        Other
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <h2>Mutation</h2>
+            <p>This fields are used to update, create, delete records.</p>
+            <table class="table table-striped table-bordered mt-2">
+                <thead>
+                <th>
+                    Field
+                </th>
+                <th>
+                    Parameter
+                </th>
+                <th>
+                    Payload
+                </th>
+                <th>
+                    Description
+                </th>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>social</td>
+                    <td>id: ID<br>
+                        label: String!<br>
+                        url: String!
+                    </td>
+                    <td>social: SocialLinkType<br><small>SocialLinkType contains same payload vales as
+                        getSocialLinks</small><br>
+                        ok: Boolean<br>
+                        warning: String
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>removeSocial</td>
+                    <td>socialId: ID!</td>
+                    <td>ok: Boolean<br>
+                        warning: String
+                    </td>
+                    <td>Used to delete social link</td>
+                </tr>
+                <tr>
+                    <td>education</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>removeEducation</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>experience</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>removeExperience</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>project</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>removeProject</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>skill</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>removeSkill</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>socialAuth</td>
+                    <td>accessToken: String!<br>
+                        provider: String!
+                    </td>
+                    <td>social: SocialType<br>
+
+                        token: String
+                    </td>
+                    <td>Used to perform social authentication, provider is the oauth2 source i.e google, accessToken is
+                        the token obtained from the oauth2 server
+                    </td>
+                </tr>
+                <tr>
+                    <td>personalInfo</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>contact</td>
+                    <td>input: ContactMutationInput!<br><small>Check graphql doc for more information</small></td>
+                    <td>contact: ContactType
+                        errors: [ErrorType]<br><small>Check graphql doc for more information</small><br>
+                        ok: Boolean<br>
+                        clientMutationId: String
+                    </td>
+                    <td>Used to send contact messages.</td>
+                </tr>
+                <tr>
+                    <td>avatar</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>register</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>verifyAccount</td>
+                    <td>token: String!</td>
+                    <td>success: Boolean<br>
+                        errors: ExpectedErrorType
+                    </td>
+                    <td>Used to change user account status to verified. It accepts the token present in the activation
+                        email sent to user email address.
+                    </td>
+                </tr>
+                <tr>
+                    <td>resendActivationEmail</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>sendPasswordResetEmail</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>passwordReset</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>passwordChange</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>archiveAccount</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>deleteAccount</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>tokenAuth</td>
+                    <td>password: String!<br>
+                        email: String
+                    </td>
+                    <td></td>
+                    <td>User to authenticate users via email and password.</td>
+                </tr>
+                <tr>
+                    <td>verifyToken</td>
+                    <td></td>
+                    <td></td>
+                    <td>Used to</td>
+                </tr>
+                <tr>
+                    <td>refreshToken</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>revokeToken</td>
+                    <td>refreshToken: String!</td>
+                    <td></td>
+                    <td>Used to deactivate refresh token, this request should be made when attempting to sign out a user
+                        from his account, user token should be deleted on the client side also.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+</div>
+</body>
+</html>

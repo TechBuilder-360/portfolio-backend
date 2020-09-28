@@ -7,7 +7,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 SEX_CHOICES = (
     ('Male', 'Male'),
     ('Female', 'Female'),
-    ('Others', 'Others')
+    ('Unknown', 'Unknown')
 )
 
 # STATUS_CHOICE = (
@@ -84,7 +84,7 @@ class User(AbstractUser):
         ordering = ('first_name',)
 
     def get_full_name(self):
-        return "%s %s %s" % self.last_name, self.first_name, self.middle_name
+        return "%s %s" % (self.last_name, self.first_name)
 
 
 class Contact(models.Model):
