@@ -1,1 +1,6 @@
 Add method to check if user account is active when ever request is been made
+
+Generate Username from frontend, combine lastname + firstname + 8 uuid characters
+
+Limit The number of Social to 3 per user
+

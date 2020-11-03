@@ -61,6 +61,7 @@ MIDDLEWARE = [
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
+    'http://127.0.0.1:3000',
 )
 
 SITE_ID = 1
@@ -176,7 +177,7 @@ SOCIAL_AUTH_POSTGRES_JSONFIELD = True
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/accounts/success/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
 # SOCIAL_AUTH_LOGIN_URL = '/login-url/'
 # SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/new-users-redirect-url/'
 # SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/account-disconnected-redirect-url/'
@@ -187,12 +188,15 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv('PORTFOLIO_SOCIAL_AUTH_GOOGLE_OAUTH2_K
 
 SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = False
 
+SOCIAL_AUTH_UUID_LENGTH = 8
+
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
     'social_core.pipeline.social_auth.social_user',
     'social_core.pipeline.user.get_username',
     'social_core.pipeline.user.create_user',
+    'accounts.pipeline.get_avatar',
     'social_core.pipeline.social_auth.associate_user',
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
@@ -250,7 +254,7 @@ GRAPHQL_JWT = {
 
 GRAPHQL_AUTH = {
     'LOGIN_ALLOWED_FIELDS': ['email'],
-    'REGISTER_MUTATION_FIELDS_OPTIONAL': ["first_name", "last_name"]
+    'REGISTER_MUTATION_FIELDS_OPTIONAL': ["email", "first_name", "last_name"]
 }
 
 EXPIRATION_ACTIVATION_TOKEN = timedelta(days=1)

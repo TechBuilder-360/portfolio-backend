@@ -3,13 +3,13 @@ from django.utils.translation import ugettext_lazy as _
 from accounts.models import User
 
 
-SOCIAL_LABEL= (
-    ("Facebook", "Facebook"),
-    ("Twitter", "Twitter"),
-    ("Linkedin", "Linkedin"),
-    ("Website", "Website"),
-    ("Others", "Others"),
-)
+# SOCIAL_LABEL= (
+#     ("Facebook", "Facebook"),
+#     ("Twitter", "Twitter"),
+#     ("Linkedin", "Linkedin"),
+#     ("Website", "Website"),
+#     ("Others", "Others"),
+# )
 
 
 PROJECT_SOURCE= (
@@ -17,9 +17,10 @@ PROJECT_SOURCE= (
     ("OTHER", "Other"),
 )
 
+
 class SocialLink(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT)
-    label = models.CharField(max_length=20, choices=SOCIAL_LABEL, verbose_name=_("Social host i.e Facebook, twitter etc."))
+    label = models.CharField(max_length=20, verbose_name=_("Social host i.e Facebook, twitter etc."))
     social_url = models.URLField()
 
     def __str__(self):
@@ -39,10 +40,8 @@ class Education(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     education_type = models.CharField(max_length=20, choices=EDUCATION_CHOICE, null=False, blank=False)
     institution = models.CharField(max_length=100, null=False, blank=False)
-    start_year = models.DateField()
-    end_year = models.DateField(null=True, blank=True)
-    in_progress = models.BooleanField(
-        default=True)  # TODO: a checker should be set to change in_progress to false if end date is a future date
+    start_year = models.DateField(null=False, blank=False)
+    end_year = models.DateField(null=False, blank=False)
     degree = models.CharField(max_length=50, null=False, blank=False)
     course = models.CharField(max_length=50, verbose_name=_('Discipline'), null=False, blank=False)
 
@@ -81,9 +80,9 @@ class Skill(models.Model):
         return self.title
 
 
-class SubSkill(models.Model):  # Still rethinking of the relevance of this model. To remove or not to
-    skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
-    sub_skill = models.CharField(max_length=30, null=False, blank=False)
+class SubSkill(models.Model):
+    skill = models.ForeignKey(Skill, on_delete=models.CASCADE, related_name='sub_skills')
+    title = models.CharField(max_length=30, null=False, blank=False)
 
     def __str__(self):
-        return self.sub_skill
+        return self.title

@@ -10,15 +10,8 @@ SEX_CHOICES = (
     ('Unknown', 'Unknown')
 )
 
-# STATUS_CHOICE = (
-#     ('UNAVAILABLE', 'Unavailable'),
-#     ('AVAILABLE', 'Available'),
-#     ('DEACTIVATED', 'Deactivated')
-# )
-
 
 class UserManager(BaseUserManager):
-
     def get_all_users(self):
         """Returns all users"""
         return super(UserManager, self).get_queryset().all()
@@ -66,16 +59,13 @@ class User(AbstractUser):
     resume = models.URLField('resume', null=True, blank=True)
     nationality = models.CharField(max_length=20, null=True, blank=True)
     state_of_residence = models.CharField(max_length=20, null=True, blank=True)
-    # status = models.CharField(max_length=15, choices=STATUS_CHOICE, null=False, blank=False, default='Available')
     date_of_birth = models.DateField(null=True, blank=True)  # applicant should be greater than 17
     profession = models.CharField(max_length=50, verbose_name=_("Job Title"), null=False, blank=False,
                                   default='')  # Todo: convert to choice field
     profile_pix = models.URLField('avatar', null=True, blank=True)
 
-    # USERNAME_FIELD = 'email'
-
     def __str__(self):
-        return "(%d) - %s %s" %(self.id, self.last_name, self.first_name)
+        return "(%d) - %s %s" % (self.id, self.last_name, self.first_name)
 
     class Meta:
         app_label = 'accounts'
@@ -93,6 +83,6 @@ class Contact(models.Model):
     message = models.CharField(max_length=255, null=False, blank=False)
 
     def __str__(self):
-        return "(%s: %s)" % (self.full_name[:15], self.email[:15])
+        return "(%s: %s)" % (self.full_name[:10], self.message[:15])
 
 

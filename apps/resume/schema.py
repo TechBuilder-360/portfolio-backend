@@ -2,7 +2,7 @@ import graphene
 from graphene_django import DjangoObjectType
 from graphql_jwt.decorators import login_required
 from graphene_django.forms.mutation import DjangoModelFormMutation
-from .models import SocialLink, Education, Experience, Project, Skill
+from .models import SocialLink, Education, Experience, Project, Skill, SubSkill
 from .forms import EducationForm, ExperienceForm
 
 
@@ -33,7 +33,13 @@ class ProjectType(DjangoObjectType):
 class SkillType(DjangoObjectType):
     class Meta:
         model = Skill
-        exclude = ("user",)
+        exclude = ("user", "sub_skills")
+
+
+class SubSkillType(DjangoObjectType):
+    class Meta:
+        model = SubSkill
+        fields = '__all__'
 
 
 class Query(graphene.ObjectType):
@@ -42,7 +48,7 @@ class Query(graphene.ObjectType):
     get_experience = graphene.Field(graphene.List(ExperienceType), username=graphene.String())
     get_projects = graphene.Field(graphene.List(ProjectType), username=graphene.String())
     get_skills = graphene.Field(graphene.List(SkillType), username=graphene.String())
-
+    get_subSkills = graphene.Field(graphene.List(SubSkillType), username=graphene.String())
 
     @staticmethod
     def resolve_get_social_links(self, info, username):
@@ -63,6 +69,10 @@ class Query(graphene.ObjectType):
     @staticmethod
     def resolve_get_skills(self, info, username):
         return Skill.objects.filter(user__username=username)
+
+    @staticmethod
+    def resolve_get_subSkills(self, info, username):
+        return SubSkill.objects.filter(skill__user__username=username)
 
 
 class SocialLinkMutation(graphene.Mutation):
@@ -87,7 +97,11 @@ class SocialLinkMutation(graphene.Mutation):
                 id=data.get('id'),
                 defaults=data
             )
-        return SocialLinkMutation(ok=True, social=social)
+            if SocialLink.objects.filter(user=user).count() < 3:
+                return SocialLinkMutation(ok=True, social=social)
+            else:
+                social.delete()
+                return SocialLinkMutation(ok=False, warning='Social as reached maximum number.')
 
 
 class RemoveSocialLink(graphene.Mutation):
@@ -257,9 +271,51 @@ class SkillRemove(graphene.Mutation):
         user = info.context.user
         try:
             Skill.objects.get(user=user, id=skill_id).delete()
-            return SkillMutation(ok=True)
+            return SkillRemove(ok=True)
         except Skill.DoesNotExist:
-            return SkillMutation(ok=False, warning='Skill does not exist')
+            return SkillRemove(ok=False, warning='Skill does not exist')
+
+
+class SubSkillMutation(graphene.Mutation):
+    subSkill = graphene.Field(SubSkillType)
+    ok = graphene.Boolean()
+    warning = graphene.String()
+
+    class Arguments:
+        title = graphene.String(required=True)
+        id = graphene.ID()
+        skill_id = graphene.Int(required=True)
+
+    @login_required
+    def mutate(self, info, **data):
+        user = info.context.user
+        try:
+            SubSkill.objects.get(skill__id=data['skill_id'], title=data['title'], skill__user=user)
+            return SkillMutation(ok=False, warning='Sub skill already exist')
+        except SubSkill.DoesNotExist:
+            subSkill, created = SubSkill.objects.update_or_create(
+                skill__id=data.get('skill_id'),
+                id=data.get('id'),
+                defaults=data
+            )
+        return SubSkillMutation(ok=True, subSkill=subSkill)
+
+
+class SubSkillRemove(graphene.Mutation):
+    ok = graphene.Boolean()
+    warning = graphene.String()
+
+    class Arguments:
+        id = graphene.ID(required=True)
+
+    @login_required
+    def mutate(self, info, id):
+        user = info.context.user
+        try:
+            SubSkill.objects.get(skill__user=user, id=id).delete()
+            return SubSkillRemove(ok=True)
+        except SubSkill.DoesNotExist:
+            return SubSkillRemove(ok=False, warning='Skill does not exist')
 
 
 class Mutation(graphene.ObjectType):
@@ -273,6 +329,8 @@ class Mutation(graphene.ObjectType):
     remove_project = RemoveProject.Field()
     skill = SkillMutation.Field()
     remove_skill = SkillRemove.Field()
+    sub_skill = SubSkillMutation.Field()
+    remove_subSkill = SubSkillRemove.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
