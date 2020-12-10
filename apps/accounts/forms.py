@@ -1,14 +1,17 @@
-import cloudinary
 from django.forms import ModelForm
-from django import forms
 from .models import User, Contact
 
 
 class PersonalInformationForm(ModelForm):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'middle_name', 'gender', 'phone', 'bio',
-                  'languages', 'nationality', 'state_of_residence', 'date_of_birth', 'profession')
+        fields = ('first_name', 'last_name', 'middle_name', 'gender', 'phone', 'bio', 'email',
+                  'languages', 'location', 'date_of_birth', 'profession')
+
+    def save(self, commit=True):
+        personal = super(PersonalInformationForm, self).save(commit=False)
+        personal.save()
+        return personal
 
 
 class ContactForm(ModelForm):

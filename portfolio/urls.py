@@ -6,9 +6,9 @@ from graphene_django.views import GraphQLView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("graphql/", csrf_exempt(GraphQLView.as_view(graphiql=True)), name="graphql"),
+    path('accounts/', include('accounts.urls')),
     path('', TemplateView.as_view(template_name="index.html")),
-    # path('google/', TemplateView.as_view(template_name="accounts/google_auth.html")),
+    path("graphql/", csrf_exempt(GraphQLView.as_view(graphiql=True)), name="graphql"),
     path('api/doc/', TemplateView.as_view(template_name="doc.html"), name="doc"),
     path('', include('social_django.urls', namespace='social')),
 ]

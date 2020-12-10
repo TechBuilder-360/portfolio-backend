@@ -1,6 +1,7 @@
+from accounts.views import avartar
 from django.urls import path
-from .views import googleAuth
+from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = [
-    path('google/auth/', googleAuth, name='google_login'),
+    path('upload/', csrf_exempt(avartar), name="upload")
 ]

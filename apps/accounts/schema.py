@@ -1,21 +1,22 @@
 import cloudinary
 import graphene
 import graphql_social_auth
+from django.db import IntegrityError
 
 from graphene_django import DjangoObjectType
 from graphene_django.forms.mutation import DjangoModelFormMutation
 from graphql_jwt.decorators import login_required
 
 from .models import User, Contact
-from .forms import PersonalInformationForm, ContactForm
+from .forms import ContactForm
 from graphql import GraphQLError
 
 
 class UserType(DjangoObjectType):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'middle_name', 'username', 'email', 'gender', 'phone', 'bio', 'resume',
-                  'languages', 'nationality', 'state_of_residence', 'date_of_birth', 'profession', 'profile_pix', 'id')
+        fields = ('first_name', 'last_name', 'middle_name', 'username', 'email', 'gender', 'phone', 'bio',
+                  'languages', 'location', 'date_of_birth', 'profession', 'profile_pix')
 
 
 class ContactType(DjangoObjectType):
@@ -34,40 +35,67 @@ class Query(graphene.ObjectType):
             raise GraphQLError("User not found")
 
 
-class PersonalInformationMutation(DjangoModelFormMutation):
-    user = graphene.Field(UserType)
+class PersonalInformationMutation(graphene.Mutation):
     ok = graphene.Boolean()
-
-    class Meta:
-        form_class = PersonalInformationForm
-
-    @login_required
-    def perform_mutate(self, info):
-        user, created = User.objects.update_or_create(
-            username=info.context.user.username,
-            defaults=self.data
-        )
-        return PersonalInformationMutation(ok=True, user=user)
-
-
-class Avatar(graphene.Mutation):
-    ok = graphene.Boolean()
-    warning = graphene.String()
 
     class Arguments:
-        avatar = graphene.String(required=True)
+        first_name = graphene.String(required=True)
+        last_name = graphene.String(required=True)
+        middle_name = graphene.String()
+        email = graphene.String(required=True)
+        gender = graphene.String()
+        phone = graphene.String()
+        bio = graphene.String()
+        languages = graphene.String()
+        location = graphene.String()
+        date_of_birth = graphene.Date()
+        profession = graphene.String()
 
     @login_required
-    def mutate(self, info, avatar):
+    def mutate(self, info, **data):
+        User.objects.update_or_create(
+            username=info.context.user.username,
+            email=info.context.user.email,
+            defaults=data
+        )
+        return PersonalInformationMutation(ok=True)
+
+
+class Registration(graphene.Mutation):
+    ok = graphene.Boolean()
+    error = graphene.String()
+
+    class Arguments:
+        email = graphene.String(required=True)
+        first_name = graphene.String(required=True)
+        last_name = graphene.String(required=True)
+        password = graphene.String(required=True)
+
+    def mutate(self, info, **kwargs):
+        try:
+            User.objects.create_user(last_name=kwargs['last_name'], first_name=kwargs['first_name'],
+                                     email=kwargs['email'], password=kwargs['password'])
+        except IntegrityError:
+            return Registration(ok=False, error="Email already exist")
+        return Registration(ok=True)  # Todo send welcome email
+
+
+class UploadMutation(graphene.Mutation):
+    class Arguments:
+        file = graphene.String(required=True)
+
+    success = graphene.Boolean()
+
+    # @login_required
+    def mutate(self, info, file, **kwargs):
         try:
             user = info.context.user
-            image = cloudinary.uploader.upload(avatar)
-            user.profile_pix = image['url']
+            image = cloudinary.uploader.upload(file)
+            info.profile_pix = image['url']
             user.save()
-            return Avatar(ok=True)
+            return UploadMutation(success=True)
         except Exception as ex:
-            print("An error occured \n", ex)
-            return Avatar(ok=False)
+            return UploadMutation(success=False)
 
 
 class ContactMutation(DjangoModelFormMutation):
@@ -86,7 +114,8 @@ class Mutation(graphene.ObjectType):
     social_auth = graphql_social_auth.SocialAuthJWT.Field()
     personal_info = PersonalInformationMutation.Field()
     contact = ContactMutation.Field()
-    avatar = Avatar.Field()
+    upload = UploadMutation.Field()
+    register = Registration.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

@@ -1,9 +1,7 @@
 import graphene
 from graphene_django import DjangoObjectType
 from graphql_jwt.decorators import login_required
-from graphene_django.forms.mutation import DjangoModelFormMutation
 from .models import SocialLink, Education, Experience, Project, Skill, SubSkill
-from .forms import EducationForm, ExperienceForm
 
 
 class SocialLinkType(DjangoObjectType):
@@ -121,76 +119,86 @@ class RemoveSocialLink(graphene.Mutation):
             return RemoveSocialLink(ok=False, warning='Social contact does not exist')
 
 
-class EducationMutation(DjangoModelFormMutation):
+class EducationMutation(graphene.Mutation):
     education = graphene.Field(EducationType)
-    education_id = graphene.ID()
-    ok = graphene.Boolean()
+    created = graphene.Boolean()
 
-    class Meta:
-        form_class = EducationForm
+    class Arguments:
+        id = graphene.ID(required=True)
+        institution = graphene.String(required=True)
+        start_year = graphene.String(required=True)
+        end_year = graphene.String(required=True)
+        degree = graphene.String(required=True)
+        course = graphene.String(required=True)
 
     @login_required
-    def perform_mutate(self, info, education_id=None):
+    def mutate(self, info, **data):
         user = info.context.user
+        data['id'] = data['id'] or None
         education, created = Education.objects.update_or_create(
             user=user,
-            id=education_id,
-            defaults=self.data
+            id=data.get('id'),
+            defaults=data
         )
-        EducationMutation(ok=True, education=education)
+        return EducationMutation(created=created, education=education)
 
 
 class RemoveEducation(graphene.Mutation):
     ok = graphene.Boolean()
-    warning = graphene.String()
+    message = graphene.String()
 
     class Arguments:
-        education_id = graphene.ID(required=True)
+        id = graphene.ID(required=True)
 
     @login_required
-    def mutate(self, info, education_id):
+    def mutate(self, info, id):
         user = info.context.user
         try:
-            Education.objects.get(user=user, id=education_id).delete()
+            Education.objects.get(user=user, id=id).delete()
             return RemoveEducation(ok=True)
         except Education.DoesNotExist:
-            return RemoveEducation(ok=False, warning='Education does not exist')
+            return RemoveEducation(ok=False, message='Education does not exist')
 
 
-class ExperienceMutation(DjangoModelFormMutation):
+class ExperienceMutation(graphene.Mutation):
     experience = graphene.Field(ExperienceType)
-    experience_id = graphene.ID()
-    ok = graphene.Boolean()
+    created = graphene.Boolean()
 
-    class Meta:
-        form_class = ExperienceForm
+    class Arguments:
+        id = graphene.ID(required=True)
+        organization = graphene.String(required=True)
+        position = graphene.String(required=True)
+        description = graphene.String(required=True)
+        start_year = graphene.String(required=True)
+        end_year = graphene.String(required=True)
 
     @login_required
-    def perform_mutate(self, info, experience_id=None):
+    def mutate(self, info, **data):
         user = info.context.user
+        data['id'] = data['id'] or None
         experience, created = Experience.objects.update_or_create(
             user=user,
-            id=experience_id,
-            defaults=self.data
+            id=data.get('id'),
+            defaults=data
         )
-        EducationMutation(ok=True, experience=experience)
+        return ExperienceMutation(created=created, experience=experience)
 
 
 class RemoveExperience(graphene.Mutation):
     ok = graphene.Boolean()
-    warning = graphene.String()
+    message = graphene.String()
 
     class Arguments:
-        experience_id = graphene.ID(required=True)
+        id = graphene.ID(required=True)
 
     @login_required
-    def mutate(self, info, experience_id):
+    def mutate(self, info, id):
         user = info.context.user
         try:
-            Experience.objects.get(user=user, id=experience_id).delete()
+            Experience.objects.get(user=user, id=id).delete()
             return RemoveExperience(ok=True)
         except Experience.DoesNotExist:
-            return RemoveExperience(ok=False, warning='Experience does not exist')
+            return RemoveExperience(ok=False, message='Experience does not exist')
 
 
 class ProjectMutation(graphene.Mutation):
@@ -200,6 +208,7 @@ class ProjectMutation(graphene.Mutation):
 
     class Arguments:
         title = graphene.String(required=True)
+        description = graphene.String(required=True)
         url = graphene.String(required=True)
         id = graphene.ID()
 

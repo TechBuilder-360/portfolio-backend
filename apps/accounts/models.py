@@ -1,4 +1,4 @@
-from random import random
+from random import random, randint
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -9,6 +9,14 @@ SEX_CHOICES = (
     ('Female', 'Female'),
     ('Unknown', 'Unknown')
 )
+
+
+def set_username(instance):
+    username = instance.last_name + instance.first_name
+    pre_exist = list(User.objects.filter(username__startswith=username).values_list('username', flat=True))
+    while username in pre_exist:
+        username += str(randint(124, 99999))
+    return username
 
 
 class UserManager(BaseUserManager):
@@ -54,13 +62,12 @@ class User(AbstractUser):
     email = models.EmailField(max_length=254, verbose_name=_('Email Address'), blank=False, null=False, unique=True)
     gender = models.CharField(max_length=10, choices=SEX_CHOICES, default='', null=True, blank=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
-    bio = models.CharField(max_length=200, help_text="Professional Summary", null=True, blank=False)
+    bio = models.CharField(max_length=200, help_text="Professional Summary", null=True, blank=True)
     languages = models.CharField(max_length=100, null=True, blank=True)
     resume = models.URLField('resume', null=True, blank=True)
-    nationality = models.CharField(max_length=20, null=True, blank=True)
-    state_of_residence = models.CharField(max_length=20, null=True, blank=True)
+    location = models.CharField(max_length=70, null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)  # applicant should be greater than 17
-    profession = models.CharField(max_length=50, verbose_name=_("Job Title"), null=False, blank=False,
+    profession = models.CharField(max_length=50, verbose_name=_("Job Title"), null=True, blank=True,
                                   default='')  # Todo: convert to choice field
     profile_pix = models.URLField('avatar', null=True, blank=True)
 
@@ -75,6 +82,11 @@ class User(AbstractUser):
 
     def get_full_name(self):
         return "%s %s" % (self.last_name, self.first_name)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.username = set_username(self)
+        return super(User, self).save(*args, **kwargs)
 
 
 class Contact(models.Model):
