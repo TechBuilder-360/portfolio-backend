@@ -26,9 +26,9 @@ class ContactType(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
-    get_personal_info = graphene.Field(UserType, username=graphene.String())
+    personal_info = graphene.Field(UserType, username=graphene.String())
 
-    def resolve_get_personal_info(self, info, username):
+    def resolve_personal_info(self, info, username):
         try:
             return User.objects.get(username=username)
         except Exception:

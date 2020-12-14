@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 def get_avatar(backend, strategy, details, response,
                user=None, *args, **kwargs):
     if kwargs.get('is_new', None):
@@ -14,3 +17,5 @@ def get_avatar(backend, strategy, details, response,
         if url:
             user.profile_pix = url
             user.save()
+    else:
+        user.last_login = datetime.now()

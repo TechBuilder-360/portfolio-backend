@@ -5,8 +5,8 @@ from accounts.models import User
 
 class SocialLink(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    label = models.CharField(max_length=20, verbose_name=_("Social host i.e Facebook, twitter etc."))
-    social_url = models.URLField()
+    label = models.CharField(max_length=20, verbose_name=_("Social Host"))
+    url = models.URLField()
 
     def __str__(self):
         return self.label
