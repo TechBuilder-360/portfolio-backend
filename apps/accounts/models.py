@@ -21,7 +21,6 @@ class UserManager(BaseUserManager):
         """Returns all users"""
         return super(UserManager, self).get_queryset().filter(status=0)
 
-    # Add Oauth Authentication later
     def create_user(self, last_name, first_name, email, password=None):
         user = self.model(
             last_name=last_name,

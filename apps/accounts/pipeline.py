@@ -14,6 +14,7 @@ def get_avatar(backend, strategy, details, response,
             user.first_name = response['given_name']
             user.last_name = response['family_name']
             user.username = details['username']
+            user.last_login = datetime.now()
         if url:
             user.profile_pix = url
             user.save()
