@@ -4,13 +4,6 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 
-SEX_CHOICES = (
-    ('Male', 'Male'),
-    ('Female', 'Female'),
-    ('Unknown', 'Unknown')
-)
-
-
 def set_username(instance):
     username = instance.last_name + instance.first_name
     pre_exist = list(User.objects.filter(username__startswith=username).values_list('username', flat=True))
@@ -56,20 +49,20 @@ class UserManager(BaseUserManager):
 class User(AbstractUser):
     REQUIRED_FIELDS = ['first_name', 'last_name', ]
 
-    first_name = models.CharField(verbose_name=_('First name'), max_length=50, null=False, blank=False)
-    last_name = models.CharField(verbose_name=_('Last name'), max_length=50, null=False, blank=False)
-    middle_name = models.CharField(verbose_name=_('Middle name'), max_length=50, blank=True, null=True)
+    first_name = models.CharField(verbose_name=_('First name'), max_length=50, null=False, blank=False, default='')
+    last_name = models.CharField(verbose_name=_('Last name'), max_length=50, null=False, blank=False, default='')
+    middle_name = models.CharField(verbose_name=_('Middle name'), max_length=50, blank=True, null=True, default='')
     email = models.EmailField(max_length=254, verbose_name=_('Email Address'), blank=False, null=False, unique=True)
-    gender = models.CharField(max_length=10, choices=SEX_CHOICES, default='', null=True, blank=True)
-    phone = models.CharField(max_length=20, blank=True, null=True)
-    bio = models.CharField(max_length=200, help_text="Professional Summary", null=True, blank=True)
-    languages = models.CharField(max_length=100, null=True, blank=True)
+    gender = models.CharField(max_length=10, default='', null=True, blank=True)
+    phone = models.CharField(max_length=20, blank=True, null=True, default='')
+    bio = models.CharField(max_length=200, help_text="Professional Summary", null=True, blank=True, default='')
+    languages = models.CharField(max_length=100, help_text="Languages", null=True, blank=True, default='')
     resume = models.URLField('resume', null=True, blank=True)
-    location = models.CharField(max_length=70, null=True, blank=True)
+    location = models.CharField(max_length=70, null=True, blank=True, default='')
     date_of_birth = models.DateField(null=True, blank=True)  # applicant should be greater than 17
     profession = models.CharField(max_length=50, verbose_name=_("Job Title"), null=True, blank=True,
                                   default='')  # Todo: convert to choice field
-    profile_pix = models.URLField('avatar', null=True, blank=True)
+    profile_pix = models.URLField('avatar', null=True, blank=True, default='')
 
     def __str__(self):
         return "(%d) - %s %s" % (self.id, self.last_name, self.first_name)
