@@ -59,10 +59,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-)
+CORS_ORIGIN_WHITELIST = [host for host in ALLOWED_HOSTS if not host == '*']
 
 SITE_ID = 1
 
@@ -151,6 +148,10 @@ USE_TZ = True
 STATIC_URL = os.getenv('PORTFOLIO_STATIC_URL')
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+MEDIA_URL = os.getenv('PORTFOLIO_MEDIA_URL', '/media/')
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'portfolio', 'static'),
