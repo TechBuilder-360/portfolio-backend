@@ -80,24 +80,6 @@ class Registration(graphene.Mutation):
         return Registration(ok=True)
 
 
-class UploadMutation(graphene.Mutation):
-    class Arguments:
-        file = graphene.String(required=True)
-
-    success = graphene.Boolean()
-
-    # @login_required
-    def mutate(self, info, file, **kwargs):
-        try:
-            user = info.context.user
-            image = cloudinary.uploader.upload(file)
-            info.profile_pix = image['url']
-            user.save()
-            return UploadMutation(success=True)
-        except Exception as ex:
-            return UploadMutation(success=False)
-
-
 class ContactMutation(DjangoModelFormMutation):
     ok = graphene.Boolean()
 
@@ -114,7 +96,6 @@ class Mutation(graphene.ObjectType):
     social_auth = graphql_social_auth.SocialAuthJWT.Field()
     personal_info = PersonalInformationMutation.Field()
     contact = ContactMutation.Field()
-    upload = UploadMutation.Field()
     register = Registration.Field()
 
 
