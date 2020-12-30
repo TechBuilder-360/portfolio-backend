@@ -2,14 +2,13 @@ import cloudinary
 import graphene
 import graphql_social_auth
 from django.db import IntegrityError
-
 from graphene_django import DjangoObjectType
 from graphene_django.forms.mutation import DjangoModelFormMutation
 from graphql_jwt.decorators import login_required
-
 from .models import User, Contact
 from .forms import ContactForm
 from graphql import GraphQLError
+from .views import send_mail
 
 
 class UserType(DjangoObjectType):
@@ -77,7 +76,8 @@ class Registration(graphene.Mutation):
                                      email=kwargs['email'], password=kwargs['password'])
         except IntegrityError:
             return Registration(ok=False, error="Email already exist")
-        return Registration(ok=True)  # Todo send welcome email
+        send_mail(user=info.context.user)  # Todo send welcome email
+        return Registration(ok=True)
 
 
 class UploadMutation(graphene.Mutation):

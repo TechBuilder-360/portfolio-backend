@@ -1,4 +1,5 @@
 from datetime import datetime
+from accounts.views import send_mail
 
 
 def get_avatar(backend, strategy, details, response,
@@ -6,9 +7,9 @@ def get_avatar(backend, strategy, details, response,
     if kwargs.get('is_new', None):
         url = None
         if backend.name == 'facebook':
-            url = "http://graph.facebook.com/%s/picture?type=large"%response['id']
+            url = "http://graph.facebook.com/%s/picture?type=large" % (response['id'])
         if backend.name == 'twitter':
-            url = response.get('profile_image_url', '').replace('_normal','')
+            url = response.get('profile_image_url', '').replace('_normal', '')
         if backend.name == 'google-oauth2':
             url = response['picture']
             user.first_name = response['given_name']
@@ -17,6 +18,7 @@ def get_avatar(backend, strategy, details, response,
             user.last_login = datetime.now()
         if url:
             user.profile_pix = url
-            user.save()
+            send_mail(user.email)
     else:
         user.last_login = datetime.now()
+    user.save()
