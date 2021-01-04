@@ -1,0 +1,41 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+
+.container {
+    padding: 3%;
+    margin: 0 3%;
+    /* border: 1px solid black; */
+}
+
+p {
+    padding: 1% 0;
+    word-wrap: break-word;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+ul {
+    list-style-type: none;
+}
+
+li p {
+    line-height: 150%;
+}
+
+.column {
+    padding: 1% 0;
+    column-count: 2;
+    column-fill: auto;
+}
+
+.ul li{
+    padding: 10px 0;
+}
+
+ol {
+    margin-left: 1%;
+}
