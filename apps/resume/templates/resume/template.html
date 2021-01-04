@@ -1,28 +1,29 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <link href="{% static 'css/template.css' %}" rel="stylesheet"/>
-  </head>
-  <body>
-    <div class="container">
-      <h1>{{user.get_full_name}}</h1>
+</head>
+<body>
+<div class="container">
+    <h1>{{user.get_full_name}}</h1>
 
-      <p>{{user.profession}}<br>
-        {{user.location}}<br>
-          {{user.email}}<br>
-      {{user.phone}}
-      </p>
-      <hr>
+    <p>
+        {%if user.profession %}{{user.profession}}<br>{%endif%}
+        {%if user.location %}{{user.location}}<br>{%endif%}
+        {%if user.email %}{{user.email}}<br>{%endif%}
+        {%if user.phone %}{{user.phone}}{%endif%}
+    </p>
+    <hr>
 
-      <section>
-          <h3>Professional Summary</h3>
-          <p>
-            {{user.bio}}
-          </p>
-          <hr>
-      </section>
-      <section class="mt-20">
+    <section>
+        <h3>Professional Summary</h3>
+        <p>
+            {{user.bio|default:"Summary isn't available"}}
+        </p>
+        <hr>
+    </section>
+    <section class="mt-20">
         <h3>Education Background</h3>
         <ul>
             {% for education in educations%}
@@ -34,64 +35,64 @@
                 </p>
             </li>
             {%empty%}
-              <p>There isn't any set at the moment</p>
+            <p>There isn't any set at the moment</p>
             {%endfor%}
         </ul>
         <hr>
-      </section>
-      <section class="mt-20">
-          <h3>Employment History</h3>
-          <ul>
-              {%for experience in experiences%}
-              <li>
+    </section>
+    <section class="mt-20">
+        <h3>Employment History</h3>
+        <ul>
+            {%for experience in experiences%}
+            <li>
                 <p>
                     <strong>{{experience.position}} at {{experience.organization}}</strong><br/>
                     {{experience.description}}<br/>
                     {{experience.start_year}} - {{experience.end_year}}
                 </p>
-              </li>
-              {%empty%}
-                <p>There isn't any set at the moment</p>
-              {%endfor%}
-              </ul>
-          <hr>
-      </section>
+            </li>
+            {%empty%}
+            <p>There isn't any set at the moment</p>
+            {%endfor%}
+        </ul>
+        <hr>
+    </section>
 
-      <section class="mt-20">
-          <h3>Skills</h3>
-                <ul>
-                    {% for skill in skills %}
-                    <li>
-                        <strong>{{skill.title}} - </strong>
-                        <small>
-                            {% for sub in skill.sub_skills.all %}
-                                {% if not forloop.last %}
-                                    {{sub}},
-                                {%else%}
-                                    {{sub}}
-                                {%endif%}
-                            {%endfor%}
-                        </small>
-                    </li>
-                    {%empty%}
-                        <p>There isn't any set at the moment</p>
+    <section class="mt-20">
+        <h3>Skills</h3>
+        <ul>
+            {% for skill in skills %}
+            <li>
+                <strong>{{skill.title}} - </strong>
+                <small>
+                    {% for sub in skill.sub_skills.all %}
+                    {% if not forloop.last %}
+                    {{sub}},
+                    {%else%}
+                    {{sub}}
+                    {%endif%}
                     {%endfor%}
-                </ul>
-          <hr>
-      </section>
+                </small>
+            </li>
+            {%empty%}
+            <p>There isn't any set at the moment</p>
+            {%endfor%}
+        </ul>
+        <hr>
+    </section>
 
-      <section class="mt-20">
-          <h3>Projects</h3>
-                <ol class="ul">
-                    {% for project in projects %}
-                    <li>
-                        {{project.title}}
-                    </li>
-                    {%empty%}
-                        <p>There isn't any set at the moment</p>
-                    {%endfor%}
-                </ol>
-      </section>
-    </div>
-  </body>
+    <section class="mt-20">
+        <h3>Projects</h3>
+        <ol class="ul">
+            {% for project in projects %}
+            <li>
+                {{project.title}}
+            </li>
+            {%empty%}
+            <p>There isn't any set at the moment</p>
+            {%endfor%}
+        </ol>
+    </section>
+</div>
+</body>
 </html>

@@ -13,4 +13,4 @@ def resume_download(request, username):
         'skills': Skill.objects.filter(user=user),
         'projects': Project.objects.filter(user=user)
     }
-    return PdfResponse(request, 'resume/template.html', params, filename='resume')
+    return PdfResponse(request, 'resume/%s.html' % user.resume, params, filename='resume')
