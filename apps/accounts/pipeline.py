@@ -1,5 +1,5 @@
 from datetime import datetime
-from accounts.views import send_mail
+from accounts.views import welcome_mail
 
 
 def get_avatar(backend, strategy, details, response,
@@ -18,7 +18,7 @@ def get_avatar(backend, strategy, details, response,
             user.last_login = datetime.now()
         if url:
             user.profile_pix = url
-            send_mail(user.email)
+            welcome_mail(user.email)
     else:
         user.last_login = datetime.now()
     user.save()
