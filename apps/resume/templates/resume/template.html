@@ -59,6 +59,20 @@
     </section>
 
     <section class="mt-20">
+          <h3 class="title">Accomplishments</h3>
+          <ul>
+              {%for acc in accomplishments%}
+                <li>
+                    <p><strong>{{acc.issuer}} - {{acc.course}}</strong> <br>
+                        {{acc.description}}
+                    </p>
+                </li>
+              {%endfor%}
+          </ul>
+          <hr>
+      </section>
+
+    <section class="mt-20">
         <h3>Skills</h3>
         <ul>
             {% for skill in skills %}

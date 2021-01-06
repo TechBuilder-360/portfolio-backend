@@ -12,15 +12,6 @@ class SocialLink(models.Model):
         return self.label
 
 
-PRIMARY, SECONDARY, TERTIARY, DIPLOMA = range(4)
-EDUCATION_CHOICE = (
-    (PRIMARY, "Primary"),
-    (SECONDARY, 'Secondary'),
-    (TERTIARY, 'Tertiary'),
-    (DIPLOMA, 'Diploma')
-)
-
-
 class Education(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     institution = models.CharField(max_length=100, null=False, blank=False, default='')
@@ -28,6 +19,7 @@ class Education(models.Model):
     end_year = models.CharField(max_length=9, null=False, blank=False, default='')
     degree = models.CharField(max_length=50, null=False, blank=False, default='')
     course = models.CharField(max_length=50, verbose_name=_('Discipline'), null=False, blank=False, default='')
+    in_progress = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.user)
@@ -40,6 +32,7 @@ class Experience(models.Model):  # Employment History
     description = models.CharField(max_length=200, null=False, blank=False)
     start_year = models.CharField(max_length=9, null=False, blank=False)
     end_year = models.CharField(max_length=9, null=False, blank=False)
+    in_progress = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.user) + "(" + self.organization[:20] + ")"
@@ -69,3 +62,14 @@ class SubSkill(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Accomplishment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    issuer = models.CharField(max_length=100, null=False, blank=False)
+    course = models.CharField(max_length=100, null=False, blank=False)
+    certificate = models.URLField(help_text=_("Link to certificate"))
+    description = models.CharField(max_length=200)
+
+    def __str__(self):
+        return str(self.user)

@@ -1,7 +1,7 @@
 import graphene
 from graphene_django import DjangoObjectType
 from graphql_jwt.decorators import login_required
-from .models import SocialLink, Education, Experience, Project, Skill, SubSkill
+from .models import SocialLink, Education, Experience, Project, Skill, SubSkill, Accomplishment
 
 
 class SocialLinkType(DjangoObjectType):
@@ -40,6 +40,12 @@ class SubSkillType(DjangoObjectType):
         fields = ("id", "skill", "title")
 
 
+class AccomplishmentType(DjangoObjectType):
+    class Meta:
+        model = Accomplishment
+        exclude = ("user",)
+
+
 class Query(graphene.ObjectType):
     social = graphene.Field(graphene.List(SocialLinkType), username=graphene.String())
     education = graphene.Field(graphene.List(EducationType), username=graphene.String())
@@ -47,6 +53,7 @@ class Query(graphene.ObjectType):
     project = graphene.Field(graphene.List(ProjectType), username=graphene.String())
     skills = graphene.Field(graphene.List(SkillType), username=graphene.String())
     subskill = graphene.Field(graphene.List(SubSkillType), username=graphene.String())
+    accomplishment = graphene.Field(graphene.List(AccomplishmentType), username=graphene.String())
 
     @staticmethod
     def resolve_social(self, info, username):
@@ -71,6 +78,10 @@ class Query(graphene.ObjectType):
     @staticmethod
     def resolve_subskill(self, info, username):
         return SubSkill.objects.filter(skill__user__username=username)
+
+    @staticmethod
+    def resolve_accomplishment(self, info, username):
+        return Accomplishment.objects.filter(user__username=username)
 
 
 class SocialLinkMutation(graphene.Mutation):
@@ -120,6 +131,7 @@ class EducationMutation(graphene.Mutation):
         institution = graphene.String(required=True)
         start_year = graphene.String(required=True)
         end_year = graphene.String(required=True)
+        in_progress = graphene.Boolean(required=False)
         degree = graphene.String(required=True)
         course = graphene.String(required=True)
 
@@ -161,6 +173,7 @@ class ExperienceMutation(graphene.Mutation):
         organization = graphene.String(required=True)
         position = graphene.String(required=True)
         description = graphene.String(required=True)
+        in_progress = graphene.Boolean(required=False)
         start_year = graphene.String(required=True)
         end_year = graphene.String(required=True)
 
@@ -310,6 +323,46 @@ class SubSkillRemove(graphene.Mutation):
             return SubSkillRemove(ok=False, warning='Skill does not exist')
 
 
+class AccomplishmentMutation(graphene.Mutation):
+    id = graphene.Int()
+    created = graphene.Boolean()
+
+    class Arguments:
+        course = graphene.String(required=True)
+        certificate = graphene.String(required=True)
+        issuer = graphene.String(required=True)
+        description = graphene.String(required=False)
+        id = graphene.String(required=False)
+
+    @login_required
+    def mutate(self, info, **data):
+        user = info.context.user
+        data['id'] = data.get('id') or None
+        accomplishment, created = Accomplishment.objects.update_or_create(
+            user=user,
+            id=data.get('id'),
+            defaults=data
+        )
+        return AccomplishmentMutation(created=created, id=accomplishment.id)
+
+
+class AccomplishmentRemove(graphene.Mutation):
+    ok = graphene.Boolean()
+    warning = graphene.String()
+
+    class Arguments:
+        id = graphene.ID(required=True)
+
+    @login_required
+    def mutate(self, info, id):
+        user = info.context.user
+        try:
+            Accomplishment.objects.get(user=user, id=id).delete()
+            return AccomplishmentRemove(ok=True)
+        except Accomplishment.DoesNotExist:
+            return AccomplishmentRemove(ok=False, warning='Accomplishment does not exist')
+
+
 class Mutation(graphene.ObjectType):
     social = SocialLinkMutation.Field()
     remove_social = RemoveSocialLink.Field()
@@ -323,6 +376,8 @@ class Mutation(graphene.ObjectType):
     remove_skill = SkillRemove.Field()
     sub_skill = SubSkillMutation.Field()
     remove_subSkill = SubSkillRemove.Field()
+    accomplishment = AccomplishmentMutation.Field()
+    remove_accomplishment = AccomplishmentRemove.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
