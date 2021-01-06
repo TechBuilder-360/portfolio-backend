@@ -82,7 +82,7 @@ class User(AbstractUser):
                                   default='')  # Todo: convert to choice field
     profile_pix = models.URLField('avatar', null=True, blank=True, default='')
 
-    objects = UserManager()
+    # objects = UserManager()
 
     def __str__(self):
         return "(%d) - %s %s" % (self.id, self.last_name, self.first_name)

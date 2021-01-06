@@ -70,10 +70,10 @@ class Registration(graphene.Mutation):
     def mutate(self, info, **kwargs):
         try:
             User.objects.create_user(last_name=kwargs['last_name'], first_name=kwargs['first_name'],
-                                     email=kwargs['email'], password=kwargs['password'])
+                                     email=kwargs['email'], password=kwargs['password'], username=kwargs['last_name'])
         except IntegrityError:
             return Registration(ok=False, error="Email already exist")
-        welcome_mail(user=info.context.user)  # Todo send welcome email
+        # welcome_mail(user=info.context.user)  # Todo move email to post save signal
         return Registration(ok=True)
 
 
