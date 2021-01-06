@@ -20,7 +20,7 @@ class Template(models.Model):
     creation_date = models.DateTimeField(default=datetime.today)
 
     def __str__(self):
-        return self.template
+        return self.name
 
 
 def set_username(instance):
