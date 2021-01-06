@@ -21,7 +21,7 @@ def avartar(request):
     return JsonResponse({'url': image['url']})
 
 
-def send_mail(user):
+def welcome_mail(user):
     context = dict({'user': user}, autoescape=False)
     subject = get_template('email/welcome_subject.txt').render(context)
     body = get_template('email/welcome_email_body.txt').render(context)
