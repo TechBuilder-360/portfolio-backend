@@ -2,13 +2,15 @@ from random import random, randint
 from datetime import datetime
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.core.validators import MaxValueValidator
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 
 class Template(models.Model):
 
-    name = models.CharField(max_length=20, blank=False, null=False)
-    # rating = models.CharField(max_length=5, choices=RATING, default=0)
+    name = models.CharField(max_length=50, blank=False, null=False, unique=True)
+    filename = models.CharField(max_length=20, blank=False, null=False, unique=True)
+    rating = models.PositiveIntegerField(validators=[MaxValueValidator(5)], default=0)
     submitted_by = models.CharField(max_length=80, blank=False, null=False)
     creation_date = models.DateTimeField(default=datetime.today)
 
