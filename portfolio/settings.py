@@ -266,3 +266,5 @@ GRAPHQL_AUTH = {
 
 EXPIRATION_ACTIVATION_TOKEN = timedelta(days=1)
 EXPIRATION_PASSWORD_RESET_TOKEN = timedelta(minutes=30)
+
+FRONTEND_URL = 'https://demo-xportfolio.herokuapp.com/edit'

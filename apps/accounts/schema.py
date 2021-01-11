@@ -3,8 +3,9 @@ import graphql_social_auth
 from django.db import IntegrityError
 from graphene_django import DjangoObjectType
 from graphql_jwt.decorators import login_required
-from .models import User, Contact
+from .models import User, Contact, Template
 from graphql import GraphQLError
+
 from .views import welcome_mail
 
 
@@ -12,7 +13,7 @@ class UserType(DjangoObjectType):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'middle_name', 'username', 'email', 'gender', 'phone', 'bio',
-                  'languages', 'location', 'date_of_birth', 'profession', 'profile_pix')
+                  'languages', 'location', 'date_of_birth', 'profession', 'profile_pix',)
 
 
 class ContactType(DjangoObjectType):
@@ -21,14 +22,24 @@ class ContactType(DjangoObjectType):
         fields = '__all__'
 
 
+class TemplateType(DjangoObjectType):
+    class Meta:
+        model = Template
+        fields = ('id', 'name',)
+
+
 class Query(graphene.ObjectType):
     personal_info = graphene.Field(UserType, username=graphene.String())
+    template = graphene.Field(graphene.List(TemplateType))
 
     def resolve_personal_info(self, info, username):
         try:
             return User.objects.get(username=username)
         except Exception:
             raise GraphQLError("User not found")
+
+    def resolve_template(self, info):
+        return Template.objects.all()
 
 
 class PersonalInformationMutation(graphene.Mutation):
@@ -57,6 +68,22 @@ class PersonalInformationMutation(graphene.Mutation):
         return PersonalInformationMutation(ok=True)
 
 
+class TemplateMutation(graphene.Mutation):
+    ok = graphene.Boolean()
+    warning = graphene.String()
+
+    class Arguments:
+        id = graphene.Int(required=True)
+
+    @login_required
+    def mutate(self, info, id):
+        try:
+            User.objects.get(username=info.context.user.username).update(template=id)
+            return TemplateMutation(ok=True)
+        except User.DoesNotExist:
+            return TemplateMutation(ok=False, warning="User not found!")
+
+
 class Registration(graphene.Mutation):
     ok = graphene.Boolean()
     error = graphene.String()
@@ -73,7 +100,6 @@ class Registration(graphene.Mutation):
                                      email=kwargs['email'], password=kwargs['password'], username=kwargs['last_name'])
         except IntegrityError:
             return Registration(ok=False, error="Email already exist")
-        # welcome_mail(user=info.context.user)  # Todo move email to post save signal
         return Registration(ok=True)
 
 
@@ -95,6 +121,7 @@ class Mutation(graphene.ObjectType):
     personal_info = PersonalInformationMutation.Field()
     contact = ContactMutation.Field()
     register = Registration.Field()
+    template = TemplateMutation.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

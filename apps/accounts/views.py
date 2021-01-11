@@ -5,6 +5,7 @@ from django.core.mail import get_connection, EmailMessage
 from django.http import JsonResponse
 from django.template.loader import get_template
 
+from portfolio.settings import FRONTEND_URL
 from .models import User
 
 
@@ -22,9 +23,9 @@ def avartar(request):
 
 
 def welcome_mail(user):
-    context = dict({'user': user}, autoescape=False)
+    context = dict({'user': user, 'link': FRONTEND_URL}, autoescape=False)
     subject = get_template('email/welcome_subject.txt').render(context)
-    body = get_template('email/welcome_email_body.txt').render(context)
+    body = get_template('email/welcome_email_body.html').render(context)
     connection = get_connection()
 
     msg = EmailMessage(subject, body, to=[user.email], connection=connection)

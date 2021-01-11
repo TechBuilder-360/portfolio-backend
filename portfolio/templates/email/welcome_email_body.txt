@@ -1,5 +1,0 @@
-{{ request }}
-
-Welcome {{ user.get_full_name }}
-
-{{user.email}}

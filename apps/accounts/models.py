@@ -6,14 +6,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 
 class Template(models.Model):
-    # RATING = (
-    #     (0, "0"),
-    #     (1, "1"),
-    #     (2, "2"),
-    #     (3, "3"),
-    #     (4, "4"),
-    #     (5, "5")
-    # )
+
     name = models.CharField(max_length=20, blank=False, null=False)
     # rating = models.CharField(max_length=5, choices=RATING, default=0)
     submitted_by = models.CharField(max_length=80, blank=False, null=False)
@@ -75,7 +68,7 @@ class User(AbstractUser):
     phone = models.CharField(max_length=20, blank=True, null=True, default='')
     bio = models.TextField(max_length=500, help_text="Professional Summary", null=True, blank=True, default='')
     languages = models.CharField(max_length=100, help_text="Languages", null=True, blank=True, default='')
-    resume = models.ForeignKey(Template, null=True, on_delete=models.SET_NULL)
+    template = models.ForeignKey(Template, null=True, on_delete=models.PROTECT, related_name='template')
     location = models.CharField(max_length=70, null=True, blank=True, default='')
     date_of_birth = models.DateField(null=True, blank=True)  # applicant should be greater than 17
     profession = models.CharField(max_length=50, verbose_name=_("Job Title"), null=True, blank=True,
