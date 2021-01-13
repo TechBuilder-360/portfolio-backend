@@ -44,6 +44,7 @@ class Query(graphene.ObjectType):
 
 class PersonalInformationMutation(graphene.Mutation):
     ok = graphene.Boolean()
+    warning = graphene.String()
 
     class Arguments:
         first_name = graphene.String(required=True)
@@ -60,12 +61,15 @@ class PersonalInformationMutation(graphene.Mutation):
 
     @login_required
     def mutate(self, info, **data):
-        User.objects.update_or_create(
-            username=info.context.user.username,
-            email=info.context.user.email,
-            defaults=data
-        )
-        return PersonalInformationMutation(ok=True)
+        try:
+            User.objects.update_or_create(
+                username=info.context.user.username,
+                email=info.context.user.email,
+                defaults=data
+            )
+            return PersonalInformationMutation(ok=True)
+        except IntegrityError:
+            return PersonalInformationMutation(ok=False, warning="Email address is associated with another user!")
 
 
 class TemplateMutation(graphene.Mutation):
