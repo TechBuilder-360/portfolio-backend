@@ -23,6 +23,8 @@
         </p>
         <hr>
     </section>
+
+    {%if educations%}
     <section class="mt-20">
         <h3>Education Background</h3>
         <ul>
@@ -40,6 +42,9 @@
         </ul>
         <hr>
     </section>
+    {%endif%}
+
+    {%if experiences%}
     <section class="mt-20">
         <h3>Employment History</h3>
         <ul>
@@ -57,7 +62,9 @@
         </ul>
         <hr>
     </section>
+    {%endif%}
 
+    {%if accomplishments%}
     <section class="mt-20">
           <h3 class="title">Accomplishments</h3>
           <ul>
@@ -67,11 +74,15 @@
                         {{acc.description}}
                     </p>
                 </li>
+              {%empty%}
+                <p>There isn't any set at the moment</p>
               {%endfor%}
           </ul>
           <hr>
       </section>
+    {%endif%}
 
+    {%if skills%}
     <section class="mt-20">
         <h3>Skills</h3>
         <ul>
@@ -94,7 +105,9 @@
         </ul>
         <hr>
     </section>
+    {%endif%}
 
+    {%if projects %}
     <section class="mt-20">
         <h3>Projects</h3>
         <ol class="ul">
@@ -107,6 +120,7 @@
             {%endfor%}
         </ol>
     </section>
+    {%endif%}
 </div>
 </body>
 </html>
