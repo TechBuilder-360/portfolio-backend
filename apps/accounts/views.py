@@ -23,10 +23,13 @@ def avartar(request):
 
 
 def welcome_mail(user):
-    context = dict({'user': user, 'link': FRONTEND_URL}, autoescape=False)
-    subject = get_template('email/welcome_subject.txt').render(context)
-    body = get_template('email/welcome_email_body.html').render(context)
-    connection = get_connection()
+    try:
+        context = dict({'user': user, 'link': FRONTEND_URL}, autoescape=False)
+        subject = get_template('email/welcome_subject.txt').render(context)
+        body = get_template('email/welcome_email_body.html').render(context)
+        connection = get_connection()
 
-    msg = EmailMessage(subject, body, to=[user.email], connection=connection)
-    connection.send_messages([msg])
+        msg = EmailMessage(subject, body, to=[user.email], connection=connection)
+        connection.send_messages([msg])  # Todo: Email send fails
+    except:
+        pass
