@@ -19,40 +19,30 @@ class Template(models.Model):
 
 
 def set_username(instance):
-    username = instance.last_name + instance.first_name
+    username = (instance.last_name + instance.first_name).lower()
     pre_exist = list(User.objects.filter(username__startswith=username).values_list('username', flat=True))
     while username in pre_exist:
-        username += str(randint(124, 99999))
+        username += str(randint(1, 99999))
     return username
 
 
 class UserManager(BaseUserManager):
-    def get_all_users(self):
-        """Returns all users"""
-        return super(UserManager, self).get_queryset().all()
-
-    def get_active_users(self):
-        """Returns all users"""
-        return super(UserManager, self).get_queryset().filter(status=0)
-
-    def create_user(self, last_name, first_name, email, password=None):
+    def create_user(self, last_name, first_name, email, password, username=None):
         user = self.model(
             last_name=last_name,
             first_name=first_name,
             email=self.normalize_email(email.lower())
         )
-        does_username_exist = super(UserManager, self).get_queryset().filter(username=first_name+last_name)
-        if does_username_exist:
-            user.username = first_name+last_name+random.randint(100, 9000)
-        else:
-            user.username = first_name+last_name
+        user.username = set_username(user)
         user.set_password(password)
         user.save(using=self._db)
+        user.status.verified = True
+        user.status.save()
         return user
 
-    def create_superuser(self, last_name, first_name, middle_name, email, password):
+    def create_superuser(self, username, last_name, first_name, email, password):
         user = self.create_user(
-            last_name, first_name, middle_name, email, password)
+            last_name, first_name, email, password, username)
         user.is_superuser = True
         user.is_staff = True
         user.save(using=self._db)
@@ -73,11 +63,11 @@ class User(AbstractUser):
     template = models.ForeignKey(Template, null=True, on_delete=models.PROTECT, related_name='template')
     location = models.CharField(max_length=70, null=True, blank=True, default='')
     date_of_birth = models.DateField(null=True, blank=True)  # applicant should be greater than 17
-    profession = models.CharField(max_length=50, verbose_name=_("Job Title"), null=True, blank=True,
-                                  default='')  # Todo: convert to choice field
+    profession = models.CharField(max_length=50, verbose_name=_("Job Title"), null=True, blank=True, default='')  # Todo: convert to choice field
     profile_pix = models.URLField('avatar', null=True, blank=True, default='')
+    allow_download = models.BooleanField(default=True)
 
-    # objects = UserManager()
+    manager = UserManager()
 
     def __str__(self):
         return "(%d) - %s %s" % (self.id, self.last_name, self.first_name)

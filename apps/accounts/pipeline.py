@@ -16,6 +16,8 @@ def get_avatar(backend, strategy, details, response,
             user.last_name = response['family_name']
             user.username = details['username']
             user.last_login = datetime.now()
+            user.status.verified = True
+            user.status.save()
         if url:
             user.profile_pix = url
             # welcome_mail(user)

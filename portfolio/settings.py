@@ -110,10 +110,6 @@ DATABASES = {
     },
 }
 
-# LOGIN_URL = '/auth/login/google-oauth2/'
-
-# LOGIN_REDIRECT_URL = '/'
-
 LOGOUT_REDIRECT_URL = '/'
 
 # Password validation
@@ -184,9 +180,6 @@ SOCIAL_AUTH_POSTGRES_JSONFIELD = True
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
-# SOCIAL_AUTH_LOGIN_URL = '/login-url/'
-# SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/new-users-redirect-url/'
-# SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/account-disconnected-redirect-url/'
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('PORTFOLIO_SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 

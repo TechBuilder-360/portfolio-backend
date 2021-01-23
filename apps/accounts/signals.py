@@ -6,6 +6,6 @@ from .views import welcome_mail
 
 
 @receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
+def send_welcome_email(sender, instance, created, **kwargs):
     if created:
         welcome_mail(instance)
