@@ -66,6 +66,7 @@ class User(AbstractUser):
     profession = models.CharField(max_length=50, verbose_name=_("Job Title"), null=True, blank=True, default='')  # Todo: convert to choice field
     profile_pix = models.URLField('avatar', null=True, blank=True, default='')
     allow_download = models.BooleanField(default=True)
+    is_new = models.BooleanField(default=True)
 
     manager = UserManager()
 

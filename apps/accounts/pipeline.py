@@ -1,5 +1,4 @@
 from datetime import datetime
-# from accounts.views import welcome_mail
 
 
 def get_avatar(backend, strategy, details, response,
@@ -20,7 +19,3 @@ def get_avatar(backend, strategy, details, response,
             user.status.save()
         if url:
             user.profile_pix = url
-            # welcome_mail(user)
-    else:
-        user.last_login = datetime.now()
-    user.save()
