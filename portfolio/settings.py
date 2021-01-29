@@ -38,8 +38,11 @@ INSTALLED_APPS = [
     'django_filters',
     'graphene_django',
     "graphql_auth",
+    'crispy_forms',
     'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 TEMPLATE_LOADERS = [
     'django.template.loaders.app_directories.Loader',
@@ -74,7 +77,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(PROJECT_BASE, 'templates')
+            os.path.join(PROJECT_BASE, 'templates'),
+            'media',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -95,9 +99,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'portfolio.wsgi.application'
-
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
@@ -130,9 +131,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
-# https://docs.djangoproject.com/en/3.0/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Africa/Lagos'
@@ -142,9 +140,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = False
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = os.getenv('PORTFOLIO_STATIC_URL')
 
@@ -179,7 +174,9 @@ SOCIAL_AUTH_POSTGRES_JSONFIELD = True
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/accounts/me/'
+
+SOCIAL_AUTH_LOGIN_URL = '/accounts/me/'
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('PORTFOLIO_SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 

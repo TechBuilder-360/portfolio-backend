@@ -1,18 +1,27 @@
-from random import random, randint
+from random import randint
 from datetime import datetime
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MaxValueValidator
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 
-class Template(models.Model):
+def validate_file_extension(value):
+    import os
+    ext = os.path.splitext(value.name)[1]
+    valid_extensions = ['.html']
+    if not ext in valid_extensions:
+        raise ValidationError(u'File not supported!')
 
+
+class Template(models.Model):
     name = models.CharField(max_length=50, blank=False, null=False, unique=True)
-    filename = models.CharField(max_length=20, blank=False, null=False, unique=True)
     rating = models.PositiveIntegerField(validators=[MaxValueValidator(5)], default=0)
     submitted_by = models.CharField(max_length=80, blank=False, null=False)
     creation_date = models.DateTimeField(default=datetime.today)
+    approved = models.BooleanField(default=False)
+    file = models.FileField(default="", upload_to='resume', validators=[validate_file_extension])
 
     def __str__(self):
         return self.name
@@ -63,10 +72,13 @@ class User(AbstractUser):
     template = models.ForeignKey(Template, null=True, on_delete=models.PROTECT, related_name='template')
     location = models.CharField(max_length=70, null=True, blank=True, default='')
     date_of_birth = models.DateField(null=True, blank=True)  # applicant should be greater than 17
-    profession = models.CharField(max_length=50, verbose_name=_("Job Title"), null=True, blank=True, default='')  # Todo: convert to choice field
+    profession = models.CharField(max_length=50, verbose_name=_("Job Title"), null=True, blank=True,
+                                  default='')  # Todo: convert to choice field
     profile_pix = models.URLField('avatar', null=True, blank=True, default='')
     allow_download = models.BooleanField(default=True)
     is_new = models.BooleanField(default=True)
+
+    USERNAME_FIELD = 'email'
 
     manager = UserManager()
 
@@ -96,6 +108,3 @@ class Contact(models.Model):
 
     def __str__(self):
         return "(%s: %s)" % (self.full_name[:10], self.message[:15])
-
-
-
