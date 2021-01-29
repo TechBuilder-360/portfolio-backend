@@ -25,3 +25,4 @@ django-graphql-jwt
 django-graphql-auth
 whitenoise
 django-cors-headers
+django-crispy-forms

@@ -4,3 +4,6 @@ Generate Username from frontend, combine lastname + firstname + 8 uuid character
 
 Limit The number of Social to 3 per user
 
+1. Test username generation for form registration
+2. Test new user registration google Auth
+3. Test Password change and password reset

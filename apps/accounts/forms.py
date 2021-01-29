@@ -1,22 +1,22 @@
+from django import forms
 from django.forms import ModelForm
-from .models import User, Contact
+
+from .models import Template
 
 
-class PersonalInformationForm(ModelForm):
+class LoginForm(forms.Form):
+    email = forms.EmailField(required=True)
+    password = forms.CharField(widget=forms.PasswordInput(render_value=True))
+
+
+class UploadForm(ModelForm):
+
     class Meta:
-        model = User
-        fields = ('first_name', 'last_name', 'middle_name', 'gender', 'phone', 'bio', 'email',
-                  'languages', 'location', 'date_of_birth', 'profession')
+        model = Template
+        fields = ('name', 'file')
 
-    def save(self, commit=True):
-        personal = super(PersonalInformationForm, self).save(commit=False)
-        personal.save()
-        return personal
+    def save(self, user, commit=True):
+        template = super(UploadForm, self).save(commit=False)
+        template.submitted_by = user.get_full_name()
+        template.save()
 
-
-class ContactForm(ModelForm):
-    class Meta:
-        model = Contact
-        fields = ('email', 'full_name', 'message')
-
-# cloudinary.uploader.upload('~/Downloads/image.jpeg')

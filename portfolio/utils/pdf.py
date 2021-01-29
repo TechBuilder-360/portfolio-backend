@@ -1,10 +1,16 @@
 from django.conf import settings
 from django.template.response import TemplateResponse
+from django.contrib.staticfiles import finders
 from xhtml2pdf import pisa
 import os
 from io import BytesIO, StringIO
 from PyPDF2 import PdfFileReader, PdfFileWriter
 import uuid
+
+sUrl = settings.STATIC_URL  # /static/...
+sRoot = settings.STATIC_ROOT  #
+mUrl = settings.MEDIA_URL  # /media/38493983/test.jpg
+mRoot = settings.MEDIA_ROOT  # /Users/ade/d/d/d/test.jpg
 
 
 def resolve_links(url, rel):
@@ -14,18 +20,27 @@ def resolve_links(url, rel):
     Links are first checked against STATIC_ROOT; if they fail to resolve,
     we assume they're relative to MEDIA_ROOT.
     """
+
     url = url.replace('../', settings.STATIC_URL) if url.startswith('../') else url
 
-    # First, try to resolve resources to STATIC_ROOT:
-    url = url.replace(settings.STATIC_URL, 'portfolio/static/')
-    path = os.path.join(settings.PROJECT_BASE, *url.split('/'))
+    if url.find('css') < 0 and not url.startswith('/'):
+        return url
 
-    if not os.path.exists(path):
-        # This is probably some user-uploaded media, so use MEDIA_ROOT:
-        url = url.replace(settings.MEDIA_URL, '')
-        path = os.path.join(settings.MEDIA_ROOT, *url.split('/'))
+    if url.startswith(mUrl):
+        return os.path.join(mRoot, url.replace(mUrl, ""))
+    elif url.startswith(sUrl):
+        return os.path.join(sRoot, url.replace(sUrl, ""))
 
-    return path
+    result = finders.find(url[url.find('css'):])
+    if result:
+        if isinstance(result, (list, tuple)):
+            result = result[0]
+        result = os.path.realpath(result)
+        return result
+
+
+# from organization.apps import get_company_config
+from xhtml2pdf.config.httpconfig import httpConfig
 
 
 def render_pdf(template, context, pwd=None):
@@ -35,12 +50,16 @@ def render_pdf(template, context, pwd=None):
     Optionally, encrypts the generated PDF file, and protects it with
     the password specified by `pwd`.
     """
-
-    # from organization.apps import get_company_config
+    # if not isinstance(template, Template):
+    #     template = get_template(template)
+    # if not isinstance(context, Context):
+    #     context = Context(context)
     # context['company_logo'] = get_company_config('logo')
     # context['company_name'] = get_company_config('name', 'Add Company Name in Configuration')
 
     outfile = BytesIO()
+
+    httpConfig.save_keys('nosslcheck', True)
     pdf = pisa.CreatePDF(template.render(context), outfile, link_callback=resolve_links)
 
     if pdf.err:
@@ -51,7 +70,7 @@ def render_pdf(template, context, pwd=None):
         for page in rdr.pages:
             wr.addPage(page)
         wr.encrypt(pwd, use_128bit=True)
-        outfile = StringIO()
+        outfile = BytesIO()
         wr.write(outfile)
     return outfile.getvalue()
 

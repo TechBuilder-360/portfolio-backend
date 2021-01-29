@@ -5,29 +5,21 @@ from accounts.models import User
 
 class SocialLink(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    label = models.CharField(max_length=20, verbose_name=_("Social host i.e Facebook, twitter etc."))
-    social_url = models.URLField()
+    label = models.CharField(max_length=20, verbose_name=_("Social Host"), null=False, blank=False)
+    url = models.URLField()
 
     def __str__(self):
         return self.label
 
 
-PRIMARY, SECONDARY, TERTIARY, DIPLOMA = range(4)
-EDUCATION_CHOICE = (
-    (PRIMARY, "Primary"),
-    (SECONDARY, 'Secondary'),
-    (TERTIARY, 'Tertiary'),
-    (DIPLOMA, 'Diploma')
-)
-
-
 class Education(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    institution = models.CharField(max_length=100, null=False, blank=False)
-    start_year = models.CharField(max_length=9, null=False, blank=False)
-    end_year = models.CharField(max_length=9, null=False, blank=False)
-    degree = models.CharField(max_length=50, null=False, blank=False)
-    course = models.CharField(max_length=50, verbose_name=_('Discipline'), null=False, blank=False)
+    institution = models.CharField(max_length=100, null=False, blank=False, default='')
+    start_year = models.CharField(max_length=9, null=False, blank=False, default='')
+    end_year = models.CharField(max_length=9, null=False, blank=False, default='')
+    degree = models.CharField(max_length=50, null=False, blank=False, default='')
+    course = models.CharField(max_length=50, verbose_name=_('Discipline'), null=False, blank=False, default='')
+    in_progress = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.user)
@@ -40,6 +32,7 @@ class Experience(models.Model):  # Employment History
     description = models.CharField(max_length=200, null=False, blank=False)
     start_year = models.CharField(max_length=9, null=False, blank=False)
     end_year = models.CharField(max_length=9, null=False, blank=False)
+    in_progress = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.user) + "(" + self.organization[:20] + ")"
@@ -48,8 +41,8 @@ class Experience(models.Model):  # Employment History
 class Project(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     project_url = models.URLField()
-    title = models.CharField(max_length=50, null=True, blank=True)
-    description = models.CharField(max_length=200, null=True, blank=True)
+    title = models.CharField(max_length=50, null=True, blank=True, default='')
+    description = models.CharField(max_length=200, null=True, blank=True, default='')
 
     def __str__(self):
         return str(self.user)
@@ -69,3 +62,14 @@ class SubSkill(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Accomplishment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    issuer = models.CharField(max_length=100, null=False, blank=False)
+    course = models.CharField(max_length=100, null=False, blank=False)
+    certificate = models.URLField(help_text=_("Link to certificate"))
+    description = models.CharField(max_length=200)
+
+    def __str__(self):
+        return str(self.user)

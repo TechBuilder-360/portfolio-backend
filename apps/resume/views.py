@@ -1,3 +1,22 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404
+from accounts.models import User
+from .models import Education, Experience, Skill, Project, Accomplishment
+from portfolio.utils.pdf import PdfResponse
 
-# Create your views here.
+
+def resume_download(request, username):
+    user = get_object_or_404(User, username=username)
+    params = {
+        'user': user,
+        'educations': Education.objects.filter(user=user),
+        'experiences': Experience.objects.filter(user=user),
+        'skills': Skill.objects.filter(user=user),
+        'projects': Project.objects.filter(user=user),
+        'accomplishments': Accomplishment.objects.filter(user=user)
+    }
+    try:
+        user.template.file.file
+        template = user.template.file.name
+    except:
+        template = 'template.html'
+    return PdfResponse(request, template, params, filename='resume')

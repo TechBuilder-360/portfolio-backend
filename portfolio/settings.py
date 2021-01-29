@@ -38,8 +38,11 @@ INSTALLED_APPS = [
     'django_filters',
     'graphene_django',
     "graphql_auth",
+    'crispy_forms',
     'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 TEMPLATE_LOADERS = [
     'django.template.loaders.app_directories.Loader',
@@ -53,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'corsheaders.middleware.CorsPostCsrfMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -60,8 +64,9 @@ MIDDLEWARE = [
 
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
+    'http://localhost:3000',  # remove later
+    'http://127.0.0.1:3000',  # remove later
+    'https://demo-xportfolio.herokuapp.com',
 )
 
 SITE_ID = 1
@@ -72,7 +77,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(PROJECT_BASE, 'templates')
+            os.path.join(PROJECT_BASE, 'templates'),
+            'media',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -94,9 +100,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'portfolio.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': os.getenv('PORTFOLIO_DATABASE_ENGINE'),
@@ -107,10 +110,6 @@ DATABASES = {
         'PORT': os.getenv('PORTFOLIO_DATABASE_PORT')
     },
 }
-
-# LOGIN_URL = '/auth/login/google-oauth2/'
-
-# LOGIN_REDIRECT_URL = '/'
 
 LOGOUT_REDIRECT_URL = '/'
 
@@ -132,9 +131,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
-# https://docs.djangoproject.com/en/3.0/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Africa/Lagos'
@@ -143,14 +139,15 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.0/howto/static-files/
+USE_TZ = False
 
 STATIC_URL = os.getenv('PORTFOLIO_STATIC_URL')
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+MEDIA_URL = os.getenv('PORTFOLIO_MEDIA_URL', '/media/')
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'portfolio', 'static'),
@@ -177,10 +174,9 @@ SOCIAL_AUTH_POSTGRES_JSONFIELD = True
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
-# SOCIAL_AUTH_LOGIN_URL = '/login-url/'
-# SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/new-users-redirect-url/'
-# SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/account-disconnected-redirect-url/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/accounts/me/'
+
+SOCIAL_AUTH_LOGIN_URL = '/accounts/me/'
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('PORTFOLIO_SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 
@@ -238,6 +234,7 @@ GRAPHENE = {
 GRAPHQL_JWT = {
     'JWT_VERIFY_EXPIRATION': True,
     'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
+    'JWT_EXPIRATION_DELTA': timedelta(hours=24),
 
     "JWT_ALLOW_ANY_CLASSES": [
         "graphql_auth.mutations.Register",
@@ -259,3 +256,5 @@ GRAPHQL_AUTH = {
 
 EXPIRATION_ACTIVATION_TOKEN = timedelta(days=1)
 EXPIRATION_PASSWORD_RESET_TOKEN = timedelta(minutes=30)
+
+FRONTEND_URL = 'https://demo-xportfolio.herokuapp.com/edit'
