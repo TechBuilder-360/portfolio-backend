@@ -26,3 +26,4 @@ django-graphql-auth
 whitenoise
 django-cors-headers
 django-crispy-forms
+PyJWT==1.7.1
