@@ -18,5 +18,6 @@ def resume_download(request, username):
         user.template.file.file
         template = user.template.file.name
     except:
+
         template = 'template.html'
     return PdfResponse(request, template, params, filename='resume')
