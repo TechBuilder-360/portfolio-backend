@@ -14,5 +14,10 @@ def resume_download(request, username):
         'projects': Project.objects.filter(user=user),
         'accomplishments': Accomplishment.objects.filter(user=user)
     }
-    template = user.template.filename if user.template.filename else 'template'
-    return PdfResponse(request, 'resume/%s.html' % template, params, filename='resume')
+    try:
+        user.template.file.file
+        template = user.template.file.name
+    except:
+
+        template = 'template.html'
+    return PdfResponse(request, template, params, filename='resume')

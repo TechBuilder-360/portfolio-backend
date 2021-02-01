@@ -7,7 +7,7 @@ class UserAdmin(admin.ModelAdmin):
 
 
 class TemplateAdmin(admin.ModelAdmin):
-    list_display = ('name', 'submitted_by', 'creation_date',)
+    list_display = ('name', 'submitted_by', 'creation_date', 'approved')
 
 
 class ContactAdmin(admin.ModelAdmin):

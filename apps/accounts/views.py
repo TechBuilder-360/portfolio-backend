@@ -1,11 +1,18 @@
+import os
 import cloudinary
 import jwt
 from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.decorators import login_required
 from django.core.mail import get_connection, EmailMessage
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse, Http404
+from django.shortcuts import redirect
 from django.template.loader import get_template
+from django.template.response import TemplateResponse
 
-from portfolio.settings import FRONTEND_URL
+from portfolio.settings import FRONTEND_URL, LOGOUT_REDIRECT_URL
+from .forms import LoginForm, UploadForm
 from .models import User
 
 
@@ -33,3 +40,49 @@ def welcome_mail(user):
         connection.send_messages([msg])  # Todo: Email send fails
     except:
         pass
+
+
+def Login(request):
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            email = request.POST.get('email')
+            password = request.POST.get('password')
+            user = authenticate(request, username=email, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect("dashboard")
+            else:
+                messages.error(request, 'Incorrect login credential supplied')
+    else:
+        form = LoginForm()
+    return TemplateResponse(request, 'index.html', {"form": form})
+
+
+def logout_view(request):
+    logout(request)
+    return redirect(LOGOUT_REDIRECT_URL)
+
+
+@login_required
+def dashboard(request):
+    if request.method == 'POST':
+        form = UploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save(user=request.user, commit=False)
+            messages.success(request, "File has been uploaded successfully")
+            return redirect('dashboard')
+    else:
+        form = UploadForm()
+    return TemplateResponse(request, 'accounts/dashboard.html', {'form': form})
+
+
+@login_required
+def download(request):
+    file_path = os.path.join(settings.MEDIA_ROOT, 'sample.txt')
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as fh:
+            response = HttpResponse(fh.read(), content_type="application/txt")
+            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+            return response
+    raise Http404
