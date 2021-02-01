@@ -78,7 +78,7 @@ class User(AbstractUser):
     allow_download = models.BooleanField(default=True)
     is_new = models.BooleanField(default=True)
 
-    USERNAME_FIELD = 'email'
+    # USERNAME_FIELD = 'email'
 
     manager = UserManager()
 
