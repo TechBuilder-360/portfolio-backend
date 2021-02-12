@@ -29,5 +29,6 @@ def resume_download(request, username):
         tpl = Template(text).render(Context(params))
         return HttpResponse(tpl, content_type='application/pdf')
     except:
+
         template = 'template.html'
         return render(request, template, params)

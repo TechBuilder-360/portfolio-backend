@@ -28,3 +28,4 @@ django-crispy-forms
 django-storages[dropbox]
 django-xhtml2pdf==0.0.4
 django-anymail[mailgun]==7.1.0
+PyJWT==1.7.1
