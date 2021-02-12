@@ -5,5 +5,6 @@ from django.views.decorators.csrf import csrf_exempt
 urlpatterns = [
     path('upload/', csrf_exempt(avartar), name="upload"),
     path('me/', dashboard, name="dashboard"),
-    path('download/', download, name="download")
+    path('me/edit/<int:pk>', dashboard, name="template_edit"),
+    path('download/', download, name="download"),
 ]

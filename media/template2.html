@@ -1,0 +1,181 @@
+<html>
+<head>
+    <style>
+        @page {
+            size: letter portrait;
+            
+            @frame content_frame {
+            left: 10pt;
+            top: 50pt;
+            height: 692pt;
+        }
+        }
+
+        *{
+            padding-top: 0;
+            padding-bottom: 0;
+            padding-left: 0;
+            padding-right: 0;
+            margin-top: 0;
+            margin-bottom: 0;
+            margin-left: 0;
+            margin-right: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        td{
+            vertical-align: top;
+            box-sizing: border-box;
+            padding-left: 10px;
+            padding-top: 0;
+            padding-right: 10px;
+        }
+
+        .header {
+            color: white;
+            background-color: #a9a9a9;
+            padding-left: 8px;
+            padding-top: 15px;
+            padding-bottom: 15px;
+        }
+        
+        .subheader {
+            color: white;
+            background-color: #a9a9a9;
+            padding-left: 8px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+
+        section {
+            margin-left: 15px;
+        }
+
+        .inline{
+            display: inline;
+        }
+        .text-center{
+            text-align: center;
+        }
+        .col {
+            width: 30%;
+            padding: 10px;
+            background-color: #f8f8ff;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        ul {
+            list-style-type: none;
+        }
+        li{
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<table>
+    <tbody>
+        <tr>
+            <td class="col">
+                    <div>
+                        <h1 class="subheader">Contacts</h1>
+                            <h3>{{user.location}}</h3>
+                            <h3>{{user.email|capfirst}}</h3>
+                            <h3>{{user.phone|phone2numeric}}</h3>
+                            {% for link in social %}
+                            <h3>{{link.label}} - {{link.url}}</h3>
+                            {%endfor%}
+                    </div>
+        
+                    <div>
+                        <h1 class="subheader">Languages</h1>
+                        <ul>
+                            <li>{{user.languages}}</li>
+                        </ul>
+                    </div>
+
+                    <div class="skills">
+                        <h1 class="subheader">Skills</h1>
+                        <ol>
+                            {% for skill in skills %}
+                            <li>
+                                {{skill.title}}
+                                <ul>
+                                    {% for sub in skill.sub_skills.all %}
+                                    <li>{{sub}}</li>
+                                    {%endfor%}
+                                </ul>
+                            </li>
+                            {%endfor%}
+                        </ol>
+                    </div>
+            </td>
+            <td style="width:70%">
+                    <div class="header text-center">
+                        <h1 class="inline">{{user.get_full_name}}</h1>
+                        <br/><br/>
+                        <h3 class="inline">{{user.profession}}</h3>
+                    </div>
+        
+                        <div>
+                            <h1>Professional Summary</h1>
+                            <p class="textField">
+                                {{user.bio|linebreaks|default:"Summary isn't available"}}
+                            </p>
+                        </div>
+                        <div>
+        
+                            <h1>Work Experience</h1>
+                            <p class="textField">
+                                {%for experience in experiences%}
+                                <b>{{experience.organization}}</b> .......... {{experience.start_year}} - {% if experience.inprogress %}Present{%else%}{{experience.end_year}}{%endif%}
+                                <br>
+                                {{experience.description}} <br><br>
+                                {%empty%}
+                                There isn't any set at the moment
+                                {%endfor%}
+                            </p>
+                            </div>
+                            <div>
+                                <h1>Education</h1>
+                                <p class="textField">
+                                    {% for education in educations%}
+                                    <b> {{education.institution}} </b> .......... {{education.start_year}} - {% if education.inprogress %}Present{%else%}{{education.end_year}}{%endif%}<br>
+                                    {{education.degree}} <span>{{education.course}}</span> <br><br>
+                                    {%empty%}
+                                    There isn't any set at the moment
+                                    {%endfor%}
+                                </p>
+                            </div>
+                            {% if projects %}
+                            <div>
+                                <h1>Projects</h1>
+                                <p class="textField">
+                                    {% for project in projects %}
+                                        <p><b>{{project.title}}</b><br/>
+                                        {{project.description}}<br/>
+                                        {{project.project_url}}
+                                        </p>
+                                    {%endfor%}
+                                </p>
+                            </div>
+                            {%endif%}
+                            
+                            {% if accomplishments %}
+                            <div>
+                                <h1>Accomplishments</h1>
+                                <p class="textField">
+                                    {%for acc in accomplishments%}
+                                    <p><strong>{{acc.issuer}} - {{acc.course}}</strong> <br>
+                                        {{acc.description}}
+                                    </p>
+                                    {%endfor%}
+                                </p>
+                            </div>
+                            {%endif%}
+            </td>
+        </tr>
+    </tbody>
+</table>
+</body>
+</html>

@@ -5,18 +5,47 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-sm-12 col-md-8 mt-5">
-        <p>You can upload resume template file, accepted file format is HTML, you can download sample template here
-            <a href="{% url 'download'%}">Download Template file</a>.<br> Include the follow strictly the markup
-            in the template.
-        </p>
+    <div class="col-sm-12 col-md-5 mt-5">
+<!--        <p>You can upload resume template file, accepted file format is HTML, you can download sample template here-->
+<!--            <a href="{% url 'download'%}">Download Template file</a>.<br> Include the follow strictly the markup-->
+<!--            in the template.-->
+<!--        </p>-->
         <h3>Template</h3>
         <form class="mt-5" enctype="multipart/form-data" method="post" role="form">
             {%csrf_token%}
             {{form|crispy}}
             <button class="btn btn-primary" type="submit">Submit</button>
         </form>
-
+    </div>
+    <div class="col-sm-12 col-md-7 mt-5">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <th>Name</th>
+                    <th>Submitted by</th>
+                    <th>Submission Date</th>
+                    <th>Approved</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>
+                {% for template in templates %}
+                <tr>
+                    <td>{{template.name}}</td>
+                    <td title="{{template.submitted_by}}">{{template.submitted_by|truncatechars:'20'}}</td>
+                    <td>{{template.creation_date}}</td>
+                    <td>{{template.approved}}</td>
+                    <td>
+                        <a class="btn btn-sm btn-link" href="{% url 'template_edit' template.id %}">Edit</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No template has been submitted</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -2,7 +2,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link href="{% static 'css/template.css' %}" rel="stylesheet"/>
+<style type="text/css">
+*{
+    padding: 0;
+    margin: 0;
+}
+
+.container {
+    padding: 3%;
+    margin: 0 3%;
+}
+
+p {
+    padding: 1% 0;
+    word-wrap: break-word;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+ul {
+    list-style-type: none;
+}
+
+li p {
+    line-height: 150%;
+}
+
+.ul li{
+    padding: 10px 0;
+}
+
+ol {
+    margin-left: 1%;
+}
+</style>
 </head>
 <body>
 <div class="container">
@@ -88,8 +123,8 @@
         <ul>
             {% for skill in skills %}
             <li>
-                <strong>{{skill.title}} - </strong>
-                <small>
+                <p><strong>{{skill.title}} - </strong>
+                <i>
                     {% for sub in skill.sub_skills.all %}
                     {% if not forloop.last %}
                     {{sub}},
@@ -97,7 +132,7 @@
                     {{sub}}
                     {%endif%}
                     {%endfor%}
-                </small>
+                </i></p>
             </li>
             {%empty%}
             <p>There isn't any set at the moment</p>
@@ -113,7 +148,7 @@
         <ol class="ul">
             {% for project in projects %}
             <li>
-                {{project.title}}
+                <p><strong>{{project.title}}:-</strong> {{project.description}}</p>
             </li>
             {%empty%}
             <p>There isn't any set at the moment</p>
