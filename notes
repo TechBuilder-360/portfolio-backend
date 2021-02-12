@@ -7,3 +7,4 @@ Limit The number of Social to 3 per user
 1. Test username generation for form registration
 2. Test new user registration google Auth
 3. Test Password change and password reset
+4. Add project description to resume template

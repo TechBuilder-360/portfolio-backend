@@ -7,25 +7,28 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.core.mail import get_connection, EmailMessage
 from django.http import JsonResponse, HttpResponse, Http404
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.template.loader import get_template
 from django.template.response import TemplateResponse
 
 from portfolio.settings import FRONTEND_URL, LOGOUT_REDIRECT_URL
 from .forms import LoginForm, UploadForm
-from .models import User
+from .models import User, Template
+from django.core.mail import send_mail
 
 
 def avartar(request):
     encoded_jwt = request.headers.get('Authorization')
     decoded_jwt = jwt.decode(encoded_jwt.split()[1], settings.SECRET_KEY, algorithms=['HS256'])
+    user = User.objects.get(email=decoded_jwt['email'])
     image = cloudinary.uploader.upload(request.FILES['image'],
                                        folder="xportfolio/profile_pix/",
-                                       public_id=decoded_jwt['username'],
+                                       public_id=user.username,
                                        overwrite=True,
                                        resource_type="image"
                                        )
-    User.objects.filter(username=decoded_jwt['username']).update(profile_pix=image['url'])
+    user.profile_pix = image['url']
+    user.save()
     return JsonResponse({'url': image['url']})
 
 
@@ -54,6 +57,8 @@ def Login(request):
                 return redirect("dashboard")
             else:
                 messages.error(request, 'Incorrect login credential supplied')
+    elif request.user.is_authenticated:
+        return redirect("dashboard")
     else:
         form = LoginForm()
     return TemplateResponse(request, 'index.html', {"form": form})
@@ -65,16 +70,18 @@ def logout_view(request):
 
 
 @login_required
-def dashboard(request):
+def dashboard(request, pk=None):
+    instance = get_object_or_404(Template, pk=pk) if pk else None
     if request.method == 'POST':
-        form = UploadForm(request.POST, request.FILES)
+        form = UploadForm(instance=instance, data=request.POST, files=request.FILES)
         if form.is_valid():
             form.save(user=request.user, commit=False)
             messages.success(request, "File has been uploaded successfully")
             return redirect('dashboard')
     else:
-        form = UploadForm()
-    return TemplateResponse(request, 'accounts/dashboard.html', {'form': form})
+        templates = Template.objects.all()
+        form = UploadForm(instance=instance)
+    return TemplateResponse(request, 'accounts/dashboard.html', {'form': form, 'templates': templates})
 
 
 @login_required

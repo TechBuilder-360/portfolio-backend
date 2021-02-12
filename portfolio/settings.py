@@ -40,7 +40,18 @@ INSTALLED_APPS = [
     "graphql_auth",
     'crispy_forms',
     'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
+    'anymail',
 ]
+
+
+ANYMAIL = {
+    "MAILGUN_API_KEY": os.getenv("MAILGUN_API_KEY"),
+    "MAILGUN_API_URL": os.getenv("MAILGUN_API_URL"),
+    "MAILGUN_SENDER_DOMAIN": os.getenv("MAILGUN_SENDER_DOMAIN"),
+    "MAILGUN_WEBHOOK_SIGNING_KEY": os.getenv("MAILGUN_WEBHOOK_SIGNING_KEY")
+}
+
+
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -201,10 +212,10 @@ SOCIAL_AUTH_PIPELINE = (
 
 EMAIL_BACKEND = os.getenv('PORTFOLIO_EMAIL_BACKEND')
 EMAIL_FILE_PATH = os.path.normpath(os.path.join(BASE_DIR, 'emails'))
-EMAIL_HOST = os.getenv('PORTFOLIO_EMAIL_HOST', 'smtp.mailgun.com')
-EMAIL_PORT = os.getenv('PORTFOLIO_EMAIL_PORT', 587)
-EMAIL_HOST_USER = os.getenv('PORTFOLIO_EMAIL_USER')
-EMAIL_HOST_PASSWORD = os.getenv('PORTFOLIO_EMAIL_PASSWORD')
+EMAIL_HOST = os.getenv('MAILGUN_SMTP_SERVER', 'smtp.mailgun.com')
+EMAIL_PORT = os.getenv('MAILGUN_SMTP_PORT', 587)
+EMAIL_HOST_USER = os.getenv('MAILGUN_SMTP_LOGIN')
+EMAIL_HOST_PASSWORD = os.getenv('MAILGUN_SMTP_PASSWORD')
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 EMAIL_FROM = os.getenv('PORTFOLIO_EMAIL_FROM', '')
@@ -257,4 +268,14 @@ GRAPHQL_AUTH = {
 EXPIRATION_ACTIVATION_TOKEN = timedelta(days=1)
 EXPIRATION_PASSWORD_RESET_TOKEN = timedelta(minutes=30)
 
-FRONTEND_URL = 'https://demo-xportfolio.herokuapp.com/edit'
+FRONTEND_URL = os.getenv("PORTFOLIO_FRONTEND_URL")  #'https://demo-xportfolio.herokuapp.com/edit'
+
+DEFAULT_FILE_STORAGE = os.getenv("PORTFOLIO_DEFAULT_FILE_STORAGE")  #'storages.backends.dropbox.DropBoxStorage'
+
+DROPBOX_OAUTH2_TOKEN = os.getenv("PORTFOLIO_DROPBOX_OAUTH2_TOKEN")  #'W6e0G3ug5_oAAAAAAAAAAXhqrkWHJEWH9cuT_pc3WoliDPw3gZgRc3eJ-4VRxlnx'
+
+DROPBOX_ROOT_PATH = os.getenv("PORTFOLIO_DROPBOX_ROOT_PATH")  #'/oris'
+
+DROPBOX_WRITE_MODE = os.getenv("PORTFOLIO_DROPBOX_WRITE_MODE")  #'add'
+
+DROPBOX_TIMEOUT = int(os.getenv("PORTFOLIO_DROPBOX_TIMEOUT"))  #60

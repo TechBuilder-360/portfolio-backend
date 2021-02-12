@@ -7,7 +7,6 @@ Django>=3.1.1
 django-admin==2.0.1
 django-filter==2.3.0
 django-six==1.0.4
-djangorestframework==3.11.0
 Jinja2==2.11.2
 Markdown==3.2.2
 MarkupSafe==1.1.1
@@ -26,4 +25,7 @@ django-graphql-auth
 whitenoise
 django-cors-headers
 django-crispy-forms
+django-storages[dropbox]
+django-xhtml2pdf==0.0.4
+django-anymail[mailgun]==7.1.0
 PyJWT==1.7.1
