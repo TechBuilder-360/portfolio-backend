@@ -72,12 +72,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',  # remove later
-    'http://127.0.0.1:3000',  # remove later
-    'https://demo-xportfolio.herokuapp.com',
-)
+CORS_ORIGIN_ALLOW_ALL = bool(os.getenv("CORS_ORIGIN_ALLOW_ALL", False))
+CORS_ORIGIN_WHITELIST = tuple(os.getenv("CORS_ORIGIN_WHITELIST").split(','))
 
 SITE_ID = 1
 

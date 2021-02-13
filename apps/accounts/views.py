@@ -23,7 +23,7 @@ def avartar(request):
     decoded_jwt = jwt.decode(encoded_jwt.split()[1], settings.SECRET_KEY, algorithms=['HS256'])
     user = User.objects.get(email=decoded_jwt['email'])
     image = cloudinary.uploader.upload(request.FILES['image'],
-                                       folder="xportfolio/profile_pix/",
+                                       folder="oris/profile_pix/",
                                        public_id=user.username,
                                        overwrite=True,
                                        resource_type="image"
