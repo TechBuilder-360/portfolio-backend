@@ -92,7 +92,9 @@ class User(AbstractUser):
         ordering = ('first_name',)
 
     def get_full_name(self):
-        return "%s, %s %s" % (self.last_name, self.first_name, self.middle_name)
+        if self.middle_name:
+            return "%s, %s %s" % (self.last_name, self.first_name, self.middle_name)
+        return "%s, %s" % (self.last_name, self.first_name)
 
     def save(self, *args, **kwargs):
         if not self.id:
