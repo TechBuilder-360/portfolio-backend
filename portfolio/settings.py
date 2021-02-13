@@ -32,7 +32,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'resume',
     'accounts',
-    'rest_framework',
     'cloudinary',
     'social_django',
     'django_filters',
