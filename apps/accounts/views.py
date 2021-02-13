@@ -55,10 +55,10 @@ def Login(request):
         if form.is_valid():
             email = request.POST.get('email')
             try:
-                usr = User.objects.get(email=email)
+                usr = User.objects.get(email=email).username
                 if usr:
                     password = request.POST.get('password')
-                    user = authenticate(request, username=usr[0].username, password=password)
+                    user = authenticate(request, username=usr, password=password)
                     if user is not None:
                         login(request, user)
                         return redirect("dashboard")
