@@ -1,4 +1,4 @@
-from random import randint
+import uuid
 from datetime import datetime
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -29,9 +29,9 @@ class Template(models.Model):
 
 def set_username(instance):
     username = (instance.last_name + instance.first_name).lower()
-    pre_exist = list(User.objects.filter(username__startswith=username).values_list('username', flat=True))
-    while username in pre_exist:
-        username += str(randint(1, 99999))
+    user_list = list(User.objects.filter(username__startswith=username).values_list('username', flat=True))
+    while username in user_list:
+        username += str(uuid.uuid4()).split('-')[0]
     return username
 
 
@@ -59,7 +59,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
-    REQUIRED_FIELDS = ['first_name', 'last_name', ]
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'email']
 
     first_name = models.CharField(verbose_name=_('First name'), max_length=50, null=False, blank=False, default='')
     last_name = models.CharField(verbose_name=_('Last name'), max_length=50, null=False, blank=False, default='')

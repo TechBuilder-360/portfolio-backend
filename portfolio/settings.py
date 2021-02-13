@@ -196,6 +196,8 @@ SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = False
 
 SOCIAL_AUTH_UUID_LENGTH = 8
 
+SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email', 'username']
+
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
