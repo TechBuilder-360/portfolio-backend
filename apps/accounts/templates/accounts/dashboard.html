@@ -6,10 +6,7 @@
 {% block content %}
 <div class="row">
     <div class="col-sm-12 col-md-5 mt-5">
-<!--        <p>You can upload resume template file, accepted file format is HTML, you can download sample template here-->
-<!--            <a href="{% url 'download'%}">Download Template file</a>.<br> Include the follow strictly the markup-->
-<!--            in the template.-->
-<!--        </p>-->
+        <h6 class="mb-5">Welcome {{user.username}}</h6>
         <h3>Template</h3>
         <form class="mt-5" enctype="multipart/form-data" method="post" role="form">
             {%csrf_token%}

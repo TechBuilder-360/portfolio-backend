@@ -10,11 +10,12 @@ from django.http import JsonResponse, HttpResponse, Http404
 from django.shortcuts import redirect, get_object_or_404
 from django.template.loader import get_template
 from django.template.response import TemplateResponse
-
 from portfolio.settings import FRONTEND_URL, LOGOUT_REDIRECT_URL
 from .forms import LoginForm, UploadForm
 from .models import User, Template
-from django.core.mail import send_mail
+import logging
+
+logger = logging.getLogger('__name__')
 
 
 def avartar(request):
@@ -41,24 +42,29 @@ def welcome_mail(user):
 
         msg = EmailMessage(subject, body, to=[user.email], connection=connection)
         connection.send_messages([msg])  # Todo: Email send fails
-    except:
+    except Exception as ex:
+        logger.error("Welcome email failed to send!\nError: %s" % ex)
         pass
 
 
 def Login(request):
-    if request.method == "POST":
+    if request.user.is_authenticated:
+        return redirect("dashboard")
+    elif request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
             email = request.POST.get('email')
-            password = request.POST.get('password')
-            user = authenticate(request, username=email, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect("dashboard")
-            else:
-                messages.error(request, 'Incorrect login credential supplied')
-    elif request.user.is_authenticated:
-        return redirect("dashboard")
+            try:
+                usr = User.objects.get(email=email)
+                if usr:
+                    password = request.POST.get('password')
+                    user = authenticate(request, username=usr[0].username, password=password)
+                    if user is not None:
+                        login(request, user)
+                        return redirect("dashboard")
+            except:
+                logger.error("User with email address %s not found" % email)
+            messages.error(request, 'Incorrect login credential supplied')
     else:
         form = LoginForm()
     return TemplateResponse(request, 'index.html', {"form": form})
