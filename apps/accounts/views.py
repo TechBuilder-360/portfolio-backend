@@ -55,7 +55,7 @@ def Login(request):
         if form.is_valid():
             email = request.POST.get('email')
             try:
-                usr = User.objects.get(email=email).username
+                usr = User.objects.get(email__iexact=email).username
                 if usr:
                     password = request.POST.get('password')
                     user = authenticate(request, username=usr, password=password)

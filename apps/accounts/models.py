@@ -28,10 +28,10 @@ class Template(models.Model):
 
 
 def set_username(instance):
-    username = (instance.last_name + instance.first_name).lower()
+    username = (instance.last_name + instance.first_name + str(uuid.uuid4()).replace('-', '')[:8]).lower()
     user_list = list(User.objects.filter(username__startswith=username).values_list('username', flat=True))
     while username in user_list:
-        username += str(uuid.uuid4()).split('-')[0]
+        username += str(uuid.uuid4()).replace('-', '')[:8]
     return username
 
 
