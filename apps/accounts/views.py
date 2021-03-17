@@ -1,6 +1,7 @@
 import os
 import cloudinary
 import jwt
+from django import http
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
@@ -19,18 +20,23 @@ logger = logging.getLogger('__name__')
 
 
 def avartar(request):
-    encoded_jwt = request.headers.get('Authorization')
-    decoded_jwt = jwt.decode(encoded_jwt.split()[1], settings.SECRET_KEY, algorithms=['HS256'])
-    user = User.objects.get(email=decoded_jwt['email'])
-    image = cloudinary.uploader.upload(request.FILES['image'],
-                                       folder="oris/profile_pix/",
-                                       public_id=user.username,
-                                       overwrite=True,
-                                       resource_type="image"
-                                       )
-    user.profile_pix = image['url']
-    user.save()
-    return JsonResponse({'url': image['url']})
+    try:
+        encoded_jwt = request.headers.get('Authorization')
+        decoded_jwt = jwt.decode(encoded_jwt.split()[1], settings.SECRET_KEY, algorithms=['HS256'])
+        user = User.objects.get(username=decoded_jwt['username'])
+        image = cloudinary.uploader.upload(request.FILES['image'],
+                                           folder="oris/profile_pix/",
+                                           public_id=user.username,
+                                           overwrite=True,
+                                           resource_type="image"
+                                           )
+        logger.log(0, "Image uploaded successful for user %s ", user.username)
+        user.profile_pix = image['url']
+        user.save()
+        return JsonResponse({'url': image['url']})
+    except jwt.ExpiredSignatureError as err:
+        logger.error(0, "%s", str(err))
+        return JsonResponse({'message': "Token has expired"}).status_code(400)
 
 
 def welcome_mail(user):
