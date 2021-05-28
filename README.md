@@ -1,5 +1,7 @@
 # Portfolio
-Global portfolio hub built with django and graphQl
+Global portfolio hub to manage individuals details and showcase achievements
+
+Stack : `Django & GraphQl`
 
 # Getting started
 `git clone https://github.com/TechBuilder-360/portfolio-backend.git`
